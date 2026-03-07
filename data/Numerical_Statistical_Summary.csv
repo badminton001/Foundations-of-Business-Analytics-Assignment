@@ -1,0 +1,8 @@
+Variable,Mean,Median,Mode,Std_Dev,Skewness
+Hours_Studied,19.98,20.0,20,5.99,0.01
+Attendance,79.98,80.0,67,11.55,0.01
+Sleep_Hours,7.03,7.0,7,1.47,-0.02
+Previous_Scores,75.07,75.0,66,14.4,-0.0
+Tutoring_Sessions,1.49,1.0,1,1.23,0.82
+Physical_Activity,2.97,3.0,3,1.03,-0.03
+Exam_Score,67.24,67.0,68,3.89,1.64
