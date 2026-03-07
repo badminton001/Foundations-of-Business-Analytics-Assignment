@@ -41,10 +41,11 @@ The dashboard strictly adheres to the course's *Principle #4 (Story Telling with
 
 ---
 
-## 3. Interactive Global Filters (Sidebar) / 全局交互过滤器 (侧边栏)
+## 3. Interactive Global Filters & Interaction Logic / 全局交互过滤器与交互逻辑
 
-To adhere to *Best Practice: Interactivity*, a narrow (180px) global sidebar allows continuous drill-down without consuming horizontal chart space.
-为匹配 *最佳实践：交互性设计*，我们采用了极窄设定 (180px) 的全局侧边栏，它允许受众持续进行数据下钻，同时最大程度保留横向的图表空间资源。
+To adhere to *Best Practice: Interactivity*, a narrow (180px) global sidebar allows continuous drill-down without consuming horizontal chart space. All four filters are **globally reactive** — every chart, KPI card, and data metric on the page recomputes in real-time from the filtered sub-population the instant a selection changes.
+
+为匹配 *最佳实践：交互性设计*，我们采用了极窄设定 (180px) 的全局侧边栏，它允许受众持续进行数据下钻，同时最大程度保留横向的图表空间资源。四个过滤器均为**全局响应式**——页面上所有图表、KPI指标卡与数据计算，均在选择改变的瞬间从筛选后的子группа实时重新计算。
 
 | Filter (过滤器) | Variable (变量字段) | Values (可选项) |
 |---|---|---|
@@ -52,6 +53,32 @@ To adhere to *Best Practice: Interactivity*, a narrow (180px) global sidebar all
 | Family Income (家庭收入) | `Family_Income` | Low (低) / Medium (中) / High (高) |
 | Motivation Level (学习动力) | `Motivation_Level` | High (高) / Medium (中) / Low (低) |
 | Internet Access (网络接入) | `Internet_Access` | Yes (有) / No (无) |
+
+**Interactive Elements — Concrete Use Scenario / 交互元素——具体使用场景**
+
+The following example demonstrates how an administrator derives actionable insight through filter interaction:
+
+以下示例展示了管理者如何通过筛选器交互获取可执行洞察：
+
+> **Scenario (场景):** An administrator suspects that low-income public school students without internet access are the most at-risk sub-group.
+> 管理者怀疑"无网络接入的低收入公立学校学生"是风险最高的子群体。
+
+**Step 1 — Baseline:** With no filters applied, the KPI cards show the full-cohort mean score of **67.24** and n = **6,607** students.
+第一步：未应用任何过滤器时，KPI卡显示全队列均分 **67.24**，n = **6,607** 名学生。
+
+**Step 2 — Apply `School_Type = Public`:** The KPI mean score updates to reflect only Public school students (n ≈ 4,598). All three histogram panels and the scatter plots immediately repopulate with this filtered population. The Parallel Categories chart redraws the flow ribbons for Public students only.
+第二步：将 `School_Type` 设为 `Public`，KPI均分实时更新为仅限公立学校学生（n≈4,598）的值，三张直方图、散点图立即以该筛选群体重绘，平行类别流动图仅展示公立学生的流动带。
+
+**Step 3 — Add `Family_Income = Low`:** The sub-population narrows further (n ≈ 1,852). The Equity Section donut charts proportionally rescale. The 4D Bubble chart depopulates, retaining only Low-income Public school students — revealing whether their attendance × study hour synergy pattern differs from the full cohort.
+第三步：追加 `Family_Income = Low`，子群体进一步缩小（n≈1,852）。公平性分区的环形图按比例重新缩放，4D气泡图仅保留低收入公立学校学生，揭示其出勤率×学习时长协同效应是否与全队列有所不同。
+
+**Step 4 — Add `Internet_Access = No`:** The final sub-group (n ≈ 140) is isolated. If the KPI mean score drops materially below baseline (67.24), this confirms the sub-group is genuinely at-risk and warrants a targeted resource allocation programme — not based on assumption, but on filtered, real-time evidence.
+第四步：追加 `Internet_Access = No`，最终隔离该最小子群体（n≈140）。若KPI均分显著低于基线（67.24），则证实该子群体确实处于高风险状态，需要定向资源分配项目——依据的是实时过滤的真实证据，而非主观假设。
+
+> This "funnel drill-down" interaction pattern — from full cohort to targeted sub-population — is the core analytical mechanism that makes this dashboard operationally superior to a static Tableau snapshot or a printed statistics table.
+> 这种"漏斗式下钻"的交互模式——从全队列到目标子群体——正是使本仪表盘在实际操作价值上远超静态 Tableau 快照或打印版统计表的核心机制。
+
+
 
 ---
 
