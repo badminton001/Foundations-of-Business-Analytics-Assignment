@@ -15,11 +15,15 @@
 **Caption:** Scatter plot with marginal histogram (X-axis) and box plot (Y-axis), illustrating the relationship between Exam Score and Previous Scores, stratified by Internet Access status.
 *(Insert `plots/scatter_plots/Scatter_Previous_Score.png`)*
 
+**Caption:** Scatter plot with marginal histogram (X-axis) and box plot (Y-axis), illustrating the relationship between Exam Score and Weekly Study Hours, stratified by Family Income.
+*(Insert `plots/scatter_plots/Scatter_Hours_Score.png`)*
+
 **Key Data — Pairwise Correlations:**
 
 | Variable Pair | Pearson r | Interpretation |
 |---|---|---|
 | Attendance vs Exam_Score | **0.581** | Strong positive — the #1 predictor |
+| Hours_Studied vs Exam_Score | **0.446** | Moderate positive — the #2 predictor |
 | Previous_Scores vs Exam_Score | **0.175** | Weak positive — surprisingly low |
 
 **Why Relevant to This Dataset / 为何与本数据集高度相关:**
@@ -27,9 +31,9 @@ This dataset contains multiple continuous numerical variables (Attendance, Previ
 
 本数据集包含多个连续数值变量（出勤率、过往成绩、学习时长、期末成绩），其两两关系在分析前未知。散点图是检测两个定量变量线性关联关系的标准工具，OLS 拟合线使斜率方向与梯度直接可读。边缘分布同时揭示两个轴的密度形态，不仅展示相关性，还暴露揭示群体差异的非重叠密度区域。在 n=6,607 的大样本下，若不施加抖动（jitter）和透明度调整，点图会严重重叠，上述处理均已应用。
 
-**English Insight:** The scatter plot for Attendance reveals the strongest linear relationship in the entire dataset (r = 0.581). The OLS trendline rises sharply as attendance increases from 60% to 100%, and the marginal box plots on the Y-axis confirm that high-motivation students (green) hold a visibly tighter upper IQR versus low-motivation (red), though all tiers share overlapping cores. The `Previous_Scores` scatter is unexpectedly diffuse (r = 0.175) — the cloud of points shows far more vertical spread than one would expect from a "prior performance" predictor, suggesting that historical scores are poor proxies for current-term outcomes in this cohort.
+**English Insight:** The scatter plot for Attendance reveals the strongest linear relationship in the entire dataset (r = 0.581). The OLS trendline rises sharply as attendance increases from 60% to 100%, and the marginal box plots on the Y-axis confirm that high-motivation students (green) hold a visibly tighter upper IQR versus low-motivation (red), though all tiers share overlapping cores. The `Hours_Studied` scatter (r = 0.446) shows the second-strongest positive slope: the trendlines for all three income groups (High, Medium, Low) are nearly parallel, confirming that the return on study hours is approximately equal across income groups — effort, not background, drives score improvement here. The `Previous_Scores` scatter is unexpectedly diffuse (r = 0.175) — the cloud of points shows far more vertical spread than one would expect from a "prior performance" predictor, suggesting that historical scores are poor proxies for current-term outcomes in this cohort.
 
-**中文洞察:** 出勤率散点图揭示了整个数据集中最强的线性关系（**r = 0.581**），OLS 拟合线从 60% 出勤率到 100% 呈明显上升趋势。右侧边缘箱线图进一步揭示：高动力学生（绿）的 Q3 略高于低动力学生（红），尽管三组核心分布高度重叠。过往成绩散点图的结论更为反直觉：**r = 0.175 的极弱相关性**意味着历史成绩对当期成绩的预测力极为有限——竖直方向的超大离散度说明同等历史成绩的学生，期末表现可以相差悬殊，这正是凸显行为习惯类特征（出勤、学习时长）胜过静态基线特征的核心数据证据。
+**中文洞察:** 出勤率散点图揭示了整个数据集中最强的线性关系（**r = 0.581**），OLS 拟合线从 60% 出勤率到 100% 呈明显上升趋势。右侧边缘箱线图进一步揭示：高动力学生（绿）的 Q3 略高于低动力学生（红），尽管三组核心分布高度重叠。学习时长散点图（**r = 0.446**）展示了第二强的正向斜率：高、中、低收入三个群体的 OLS 拟合线近乎平行，说明学习时长对成绩的回报率在不同收入背景下基本一致——努力程度而非家庭背景，才是这一区间内推动成绩提升的驱动力。过往成绩散点图的结论更为反直觉：**r = 0.175 的极弱相关性**意味着历史成绩对当期成绩的预测力极为有限——竖直方向的超大离散度说明同等历史成绩的学生，期末表现可以相差悬殊。
 
 ---
 
@@ -48,9 +52,9 @@ With 6,607 individual points on a scatter plot, coincident observations cause se
 
 在 6,607 个点的散点图中，重叠观测造成了严重的过度绘制问题——点层叠在一起，真实密度结构变得不可见。2D 密度等高线图用嵌套等密度曲线（类似地形图）替代了单个点，准确呈现联合分布的概率密度分布。该图表被特别选用，是因为本数据集极窄的 Exam_Score 分布（std=3.89）将几乎所有点压缩进 Y 轴上仅 8 分宽的区间，标准散点图会将其渲染为一团无法区分的密集点云。等高线使真实的质量中心得以精确定位。
 
-**English Insight:** The density contour solves the overplotting problem inherent in n = 6,607 scatter plots. The innermost contour ring — the highest-density region — is centred at approximately Previous_Score ≈ 75–80, Exam_Score ≈ 65–68. This is where the bulk of the student population resides. The elongated, near-vertical orientation of the contour ellipses (rather than a diagonal slope) visually confirms the weak r = 0.175 correlation: for any given prior score value, the final exam score distribution is almost as wide as the entire dataset.
+**English Insight:** The density contour solves the overplotting problem inherent in n = 6,607 scatter plots. The innermost contour ring — the highest-density region — is centred at approximately Previous_Score ≈ 75–80, Exam_Score ≈ 65–68. This is where the bulk of the student population resides. The elongated, near-horizontal orientation of the contour ellipses (wide in X, compressed in Y — rather than a diagonal 45° slope) visually confirms the weak r = 0.175 correlation: across the entire range of prior scores (50–100), the final exam scores remain packed into the same narrow band of approximately 63–72, confirming that historical scores have almost no locking effect on current outcomes.
 
-**中文洞察:** 2D 密度等高线图从根本上解决了 6,607 个数据点的极度密集重叠问题。最内圈的最高密度坐标区域集中在 Previous_Score ≈ 75–80、Exam_Score ≈ 65–68 的交叉地带，这是学生群体的真实人口质心。等高线椭圆几乎呈纵向排列（而非 45°对角线斜向），以视觉语言直接证实了 **r = 0.175 的弱相关性**——在任意给定的历史成绩水平上，最终成绩的分布宽度几乎覆盖了全量程，说明历史成绩对终点没有锁定效应。
+**中文洞察:** 2D 密度等高线图从根本上解决了 6,607 个数据点的极度密集重叠问题。最内圈的最高密度坐标区域集中在 Previous_Score ≈ 75–80、Exam_Score ≈ 65–68 的交叉地带，这是学生群体的真实人口质心。等高线椭圆呈**横向扁平拉伸**的形态（X 轴方向宽而 Y 轴方向窄），而非理想相关下的 45° 斜向带状——这以视觉语言直接证实了 **r = 0.175 的弱相关性**：在 50–100 的整个历史成绩范围内，期末成绩始终被压缩在约 63–72 的同一窄带中，说明历史成绩对当期终点几乎没有锁定效应。
 
 ---
 
@@ -70,11 +74,11 @@ With 6,607 individual points on a scatter plot, coincident observations cause se
 
 **Key summary statistics:**
 
-| Motivation | Avg Exam Score | Avg Attendance | Avg Hrs Studied |
+| Motivation | Avg Exam Score | Avg Attendance (%) | Avg Hrs Studied |
 |---|---|---|---|
-| High | 67.70 | ~80 | — |
-| Medium | 67.33 | ~80 | — |
-| Low | 66.75 | ~80 | — |
+| High | 67.70 | 79.71 | 19.73 |
+| Medium | 67.33 | 80.11 | 20.08 |
+| Low | 66.75 | 79.93 | 19.96 |
 
 **Why Relevant to This Dataset / 为何与本数据集高度相关:**
 This dataset uniquely contains four variables hypothesised to interact — Attendance, Hours_Studied, Motivation_Level, and Exam_Score. Standard 2D plots can reveal only two of these relationships at once, obscuring the compounding or moderating effects. A bubble chart is the correct multi-dimensional extension: it uses the preattentive attributes of position (X, Y), size (bubble), and colour (motivation) simultaneously — directly aligned with the course principle of leveraging preattentive attributes to reduce cognitive load. This chart is specifically justified because the interaction of Attendance × Hours_Studied is central to the study's equity hypothesis: students who maintain high attendance *and* invest high study hours are predicted to show disproportionately superior outcomes.
@@ -129,9 +133,9 @@ A common assumption in education research is that private schools provide better
 
 | Score Bin | Approximate range | % of students |
 |---|---|---|
-| Low Scorers | ≤ 65 | ~33% |
-| Mid Scorers | 65–69 | ~33% |
-| High Scorers | ≥ 69 | ~33% |
+| Low Scorers | 55–66 | ~43% |
+| Mid Scorers | 67–69 | ~32% |
+| High Scorers | 70–100 | ~25% |
 
 **Key Data — Underlying distributions by Income:**
 

@@ -121,20 +121,29 @@ bins  = [0, 8, 16, 24, 32, df['Hours_Studied'].max()]
 labels = ['0–8 hrs', '9–16 hrs', '17–24 hrs', '25–32 hrs', f'33–{int(df["Hours_Studied"].max())} hrs']
 df['Hours_Studied_Bin'] = pd.cut(df['Hours_Studied'], bins=bins, labels=labels, right=True)
 
+# Attendance binned: 60–65, 65–70, 70–75, 75–80, 80–85, 85–90, 90–95, 95–100
+att_bins   = [60, 65, 70, 75, 80, 85, 90, 95, 100]
+att_labels = ['60–65%', '65–70%', '70–75%', '75–80%', '80–85%', '85–90%', '90–95%', '95–100%']
+df['Attendance_Bin'] = pd.cut(df['Attendance'], bins=att_bins, labels=att_labels, right=True, include_lowest=True)
+
 for col, name, color in [
     ('Hours_Studied_Bin', 'Weekly Study Hours',  '#118AB2'),
     ('Sleep_Hours',       'Nightly Sleep Hours', '#EF476F'),
     ('Tutoring_Sessions', 'Tutoring Sessions',   '#06D6A0'),
+    ('Attendance_Bin',    'Class Attendance (%)', '#40916C'),
     ]:
     line_df = df.groupby(col, as_index=False, observed=True)['Exam_Score'].mean()
     fig_line = px.line(line_df, x=col, y="Exam_Score", markers=True, line_shape="linear")
     fig_line.update_traces(line=dict(color=color, width=4), marker=dict(size=12, color="#073B4C"))
     fig_line = polish_layout(fig_line, f"Trend of Average Exam Score by {name}", name, "Average Exam Score")
     if col in ('Sleep_Hours', 'Tutoring_Sessions'):
-        fig_line.update_xaxes(tick0=0, dtick=1)
+        fig_line.update_xaxes(tick0=0, dtick=1, zeroline=False)
+    else:
+        fig_line.update_xaxes(zeroline=False)
     fig_line.update_yaxes(range=[50, round(line_df['Exam_Score'].max() + 5)])
     fig_line.write_image(
         os.path.join(plots_dir, "line_charts", f"Line_{col.replace('_Bin','')}.png"), scale=2
     )
 
 print("Basic Visualizations fully regenerated (no mean-bar charts).")
+

@@ -22,7 +22,7 @@
 | 75th percentile (Q3) | 70 |
 | Max | 100 |
 
-**English Insight:** The distribution of `Exam_Score` is right-skewed, with the vast majority of students scoring between 65–70 (IQR = 5 points only). A thin but notable high-performing tail extends above 80. The very narrow IQR relative to the full range (55–100) confirms that most variation is driven by a small subset of high-achievers and low-performers rather than a normal bell curve. This non-normal shape means models trained purely through MSE (which penalizes outliers heavily) may not generalise well.
+**English Insight:** The distribution of `Exam_Score` is right-skewed, with the vast majority of students scoring between 65–70 (IQR = 5 points only). A thin but notable high-performing tail extends above 80, reaching as far as 100. The very narrow IQR relative to the full range (55–100) confirms that most statistical variation is driven by a small subset of **high-achieving outliers in the right tail** — the positive skewness (1.64) means the right tail extends far more than the left. This non-normal shape means models trained purely through MSE (which penalizes outliers heavily) may not generalise well.
 
 **中文洞察:** 目标变量 `Exam_Score` 呈现出典型的右偏态分布。绝大多数学生聚集在 65–70 这个极其狭窄的四分位区间内（IQR 仅为 5 分），均值 67.24、中位数 67.0 几乎重合，说明分布高度聚集。然而从 80 分往上延伸的细长高分尾，是整体成绩方差的主要驱动力。这种非正态形状在建模时要特别注意：以均方误差为损失函数的模型对这条高分尾会产生过度惩罚，建议评估鲁棒回归或基于树的模型。
 
@@ -42,9 +42,9 @@
 | Q3 | 90% |
 | Max | 100% |
 
-**English Insight:** Attendance distribution is strongly left-skewed — concentrated between 70–100%. The majority of students maintain high attendance. The minimum of 60% means the dataset contains no cases of extreme absenteeism. Correlation with Exam Score is **r = 0.581** (the single strongest predictor in the dataset).
+**English Insight:** The distribution of `Attendance` is approximately uniform across the 60–95% range, with each 5-point bin containing roughly 830 students. There is a sharp drop at the 100% bin (near-perfect attendance is rare). The skewness of **0.01** confirms that the distribution is nearly perfectly symmetric — not left- or right-skewed. The mean (79.98%) and median (80.0%) are virtually identical, further confirming the flat, even spread. The minimum of 60% indicates that the dataset contains no cases of extreme absenteeism. Correlation with Exam Score is **r = 0.581** (the single strongest predictor in the dataset).
 
-**中文洞察:** 出勤率分布呈强烈的左偏形态，主体集中在 70–100% 区间，均值约 80%，中位数恰好 80%，最低值为 60%，说明数据集不包含极端缺课案例。其与期末成绩的皮尔逊相关系数高达 **r = 0.581**，是整个数据集中单一数值变量对目标变量的最强预测指标，远超过往成绩（r = 0.175）。
+**中文洞察:** `Attendance`（出勤率）在 60%–95% 范围内的分布近乎均匀，每个 5 分组区间约有 830 名学生。100% 出勤的档位明显偏少（近乎满勤属于少数）。**偏度值仅为 0.01**，证实分布高度对称，既非左偏也非右偏。均值（79.98%）与中位数（80.0%）几乎完全重合，进一步印证了分布的平坦均匀形态。数据集中的最低出勤率为 60%，说明不存在极端缺课的情况。出勤率与期末成绩的皮尔逊相关系数高达 **r = 0.581**，是整个数据集中对目标变量预测力最强的单一变量。
 
 ---
 
@@ -55,6 +55,7 @@
 | Statistic | Value |
 |---|---|
 | Mean | 75.07 |
+| Median | 75.00 |
 | Std Dev | 14.40 |
 | Min | 50 |
 | Q1 | 63 |
@@ -80,7 +81,7 @@
 **Caption:** Violin plot illustrating the distribution of Exam Scores across Motivation Levels (High / Medium / Low).
 *(Insert `plots/box_violin_plots/BoxViolin_Motivation_Level.png`)*
 
-**Caption:** Violin plot illustrating the distribution of Exam Scores across Teacher Quality levels.
+**Caption:** Violin plot illustrating the distribution of Exam Scores across Teacher Quality levels (High / Medium / Low / Unknown).
 *(Insert `plots/box_violin_plots/BoxViolin_Teacher_Quality.png`)*
 
 **Caption:** Violin plot illustrating the distribution of Exam Scores across Parental Involvement levels.
@@ -96,13 +97,14 @@
 | Teacher_Quality | High | 68 | 67.68 | 65 | 70 | 5 |
 | Teacher_Quality | Medium | 67 | 67.11 | 65 | 69 | 4 |
 | Teacher_Quality | Low | 67 | 66.75 | 64 | 69 | 5 |
+| Teacher_Quality | Unknown | 66 | 66.64 | 65 | 69 | 4 |
 | Parental_Involvement | High | 68 | 68.09 | 66 | 70 | 4 |
 | Parental_Involvement | Medium | 67 | 67.10 | 65 | 69 | 4 |
 | Parental_Involvement | Low | 66 | 66.36 | 64 | 69 | 5 |
 
-**English Insight:** The ordinal variables all show a consistent monotonic pattern: the `High` tier holds a higher median than `Low` in every case. However, the absolute differences are small — at most 2 points in median between extremes (e.g., Parental_Involvement High=68 vs Low=66). The IQRs are nearly identical across levels (4–5 points), and the violin shapes show that all tiers share essentially the same distribution shape. This suggests these categorical factors provide a *systematic but modest* directional push, rather than acting as decisive sorting mechanisms. Their true value may lie in interaction effects with other variables.
+**English Insight:** The ordinal variables all show a consistent monotonic pattern: the `High` tier holds a higher median than `Low` in every case. However, the absolute differences are small — at most 2 points in median between extremes (e.g., Parental_Involvement High=68 vs Low=66). The IQRs are nearly identical across levels (4–5 points), and the violin shapes show that all tiers share essentially the same distribution shape. Notably, `Teacher_Quality` includes an `Unknown` category (n=78 students with missing teacher quality records), whose median (66) is marginally lower than the `Low` category (67), suggesting that lack of information about teacher quality may itself be a mild negative signal. This suggests these categorical factors provide a *systematic but modest* directional push, rather than acting as decisive sorting mechanisms. Their true value may lie in interaction effects with other variables.
 
-**中文洞察:** 三个有序分类变量均呈现出一致的单调梯度模式：`High` 层级的中位数始终高于 `Low`。但绝对差异极为有限——极端分组间的中位数差距最大仅为 2 分（父母参与度 High=68 vs Low=66）。各等级的 IQR 也几乎一致（4–5 分），小提琴形态高度相似。这说明这些类别变量对成绩提供的是**稳定但微弱的方向性推力**，而非决定性筛选机制。它们的真正价值可能在于与其他特征的交互效应上，单独使用其预测力有限。
+**中文洞察:** 三个有序分类变量均呈现出一致的单调梯度模式：`High` 层级的中位数始终高于 `Low`。但绝对差异极为有限——极端分组间的中位数差距最大仅为 2 分（父母参与度 High=68 vs Low=66）。各等级的 IQR 也几乎一致（4–5 分），小提琴形态高度相似。尤其将注意的是，`Teacher_Quality` 包含一个 `Unknown` 类别（n=78，教师质量缺失记录的学生），其中位数（66）略低于 `Low` 类别（67），暴露出数据缺失本身可能是轻度负面信号。总体而言，这些类别变量对成绩提供的是**稳定但微弱的方向性推力**，而非决定性筛选机制。它们的真正价値可能在于与其他特征的交互效应上，单独使用其预测力有限。
 
 ---
 
@@ -128,7 +130,7 @@
 | School_Type | Private | 67 | 67.29 | 65 | 70 |
 | School_Type | Public | 67 | 67.21 | 65 | 69 |
 
-**English Insight:** All three binary features show nearly identical medians (both at 66–67). The mean differences are tiny: Internet Access (0.76 pts), Learning Disabilities (1.08 pts), School Type (0.08 pts). School Type in particular has virtually zero impact on median score. The slight penalisation for `Learning_Disabilities = Yes` (mean 66.27 vs 67.35) is plausibly an underestimate due to survivorship bias — students with severe disabilities may have been excluded from the original sample. These findings counter intuitions about strong group-level penalties and suggest that *behaviour and resource allocation*, not group membership, are the primary score drivers.
+**English Insight:** All three binary features show nearly identical medians (each at 66–67). The mean differences are tiny: Internet Access (0.76 pts), Learning Disabilities (1.08 pts), School Type (0.08 pts). School Type in particular has virtually zero impact on median score. The slight penalisation for `Learning_Disabilities = Yes` (mean 66.27 vs 67.35) is plausibly an underestimate due to survivorship bias — students with severe disabilities may have been excluded from the original sample. These findings counter intuitions about strong group-level penalties and suggest that *behaviour and resource allocation*, not group membership, are the primary score drivers.
 
 **中文洞察:** 三个二元特征的中位数几乎重叠（均在 66–67 之间）。均值差距极小：网络访问权限差距仅 0.76 分、学习障碍差距 1.08 分、学校类型差距仅 0.08 分——**School_Type 对成绩的影响实际上接近于零**。Learning_Disabilities 对成绩的轻微惩罚（66.27 vs 67.35）可能被幸存者偏差低估——有严重学习障碍的学生可能根本没有出现在数据集中。这组发现的核心结论是：**群体身份标签（学校类型、网络、障碍状态）对成绩的直接贡献远小于行为习惯变量（出勤、学习时长）**，这对资源干预策略具有重要的现实政策含义。
 
@@ -175,7 +177,7 @@
 
 ---
 
-## 4. Line Charts: Elasticity of Time Allocation
+## 4. Line Charts: Attendance & Time Allocation vs Exam Score
 
 **Caption:** Line chart showing the trend of average Exam Score by weekly Study Hours (binned).
 *(Insert `plots/line_charts/Line_Hours_Studied.png`)*
@@ -222,12 +224,31 @@
 | 7 | 69.86 |
 | 8 | 69.00 |
 
+**Caption:** Line chart showing the trend of average Exam Score by Class Attendance rate (binned into 5-point intervals).
+*(Insert `plots/line_charts/Line_Attendance.png`)*
+
+**Key Data:**
+
+| Attendance Bin | Avg Exam Score |
+|---|---|
+| 60–65% | 63.67 |
+| 65–70% | 64.68 |
+| 70–75% | 65.81 |
+| 75–80% | 66.72 |
+| 80–85% | 67.47 |
+| 85–90% | 68.67 |
+| 90–95% | 69.70 |
+| 95–100% | 70.52 |
+
 **English Insight:**
-1. **Study Hours:** The clearest linear positive elasticity in the entire basic chart set. Students studying 0–8 hours average just 63.66, while 33+ hours yields 71.25 — a spread of **7.59 points** across the full range. This is the largest absolute score delta of any line chart variable.
-2. **Sleep Hours:** Debunks the monotonic assumption entirely. The score plateau between 4–10 hours is remarkably flat (67.63 down to 67.14 — a total range of **just 0.49 points**). There is no sweet spot; sleep in this dataset has virtually no measurable impact on exam performance. This may reflect insufficient variance in the `Sleep_Hours` column or confounding with other variables.
-3. **Tutoring Sessions:** Shows a generally positive trend (0 sessions = 66.49, 6 sessions = 71.67), but the pattern breaks at 7–8 sessions (69.86, 69.00) suggesting diminishing returns. The peak at 6 sessions (+5.18 points above zero) suggests an optimal dosage effect.
+1. **Attendance:** The most consistent and steepest positive slope of all four line charts — the single strongest behavioural predictor (Pearson r = 0.581). Average score rises monotonically from **63.67** (60–65% attendance) to **70.52** (95–100%), a total spread of **+6.85 points**. The relationship is nearly perfectly linear with no plateau or inflection, confirming that every additional percentage point of attendance yields a measurable gain in exam outcome.
+2. **Study Hours:** The clearest linear positive elasticity in the entire basic chart set. Students studying 0–8 hours average just 63.66, while 33+ hours yields 71.25 — a spread of **7.59 points** across the full range. This is the largest absolute score delta of any line chart variable.
+3. **Sleep Hours:** Debunks the monotonic assumption entirely. The score plateau between 4–10 hours is remarkably flat (67.63 down to 67.14 — a total range of **just 0.49 points**). There is no sweet spot; sleep in this dataset has virtually no measurable impact on exam performance. This may reflect insufficient variance in the `Sleep_Hours` column or confounding with other variables.
+4. **Tutoring Sessions:** Shows a generally positive trend (0 sessions = 66.49, 6 sessions = 71.67), but the pattern breaks at 7–8 sessions (69.86, 69.00) suggesting diminishing returns. The peak at 6 sessions (+5.18 points above zero) suggests an optimal dosage effect.
 
 **中文洞察:**
-1. **学习时长：** 是基础图表集中弹性最清晰的正向线性变量。从 0–8 小时的均分 63.66，到 33+ 小时的均分 71.25，全量程差距高达 **7.59 分**。这是三张折线图中最大的绝对成绩跨度。
-2. **睡眠时间：** 彻底颠覆了单调递增的刻板印象。从 4 小时到 10 小时，成绩的整体波动幅度仅为 **0.49 分**（67.63 → 67.14）——几近于零的影响。在这个数据集中，睡眠时间对成绩实际上没有可测量的统计影响，可能存在与其他变量的混淆效应，或该列在数据采集时的精度不足。
-3. **辅导次数：** 总体趋势为正（0 次 66.49 → 6 次 71.67），但在 7–8 次时开始下降（69.86、69.00），说明存在**边际收益递减效应**，最优投入量大约在 6 次附近（比零次高出 5.18 分）。
+1. **出勤率：** 四张折线图中斜率最一致、最陡峭的正向趋势——也是整个数据集中单一最强的行为预测变量（r = 0.581）。平均分从 60–65% 出勤区间的 **63.67** 单调上升至 95–100% 区间的 **70.52**，全量程跨度达 **+6.85 分**。关系近乎完美线性，无平台期或拐点，证实每提高一个百分点的出勤率均能带来可测量的成绩增益。
+2. **学习时长：** 是基础图表集中弹性最清晰的正向线性变量。从 0–8 小时的均分 63.66，到 33+ 小时的均分 71.25，全量程差距高达 **7.59 分**。这是四张折线图中最大的绝对成绩跨度。
+3. **睡眠时间：** 彻底颠覆了单调递增的刻板印象。从 4 小时到 10 小时，成绩的整体波动幅度仅为 **0.49 分**（67.63 → 67.14）——几近于零的影响。在这个数据集中，睡眠时间对成绩实际上没有可测量的统计影响，可能存在与其他变量的混淆效应，或该列在数据采集时的精度不足。
+4. **辅导次数：** 总体趋势为正（0 次 66.49 → 6 次 71.67），但在 7–8 次时开始下降（69.86、69.00），说明存在**边际收益递减效应**，最优投入量大约在 6 次附近（比零次高出 5.18 分）。
+

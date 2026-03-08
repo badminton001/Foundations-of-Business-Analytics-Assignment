@@ -47,6 +47,7 @@ fig_s1 = px.scatter(
     marginal_x="histogram", marginal_y="box"
 )
 fig_s1.update_traces(marker=dict(size=4), selector=dict(mode='markers'))
+fig_s1.update_traces(line=dict(color="#073B4C", width=4), selector=dict(mode='lines'))
 fig_s1 = polish_layout(fig_s1, "Exam Score vs Class Attendance by Motivation Level",
                         "Attendance (%)", "Exam Score")
 fig_s1.update_layout(
@@ -65,6 +66,7 @@ fig_s2 = px.scatter(
     marginal_x="histogram", marginal_y="box"
 )
 fig_s2.update_traces(marker=dict(size=4), selector=dict(mode='markers'))
+fig_s2.update_traces(line=dict(color="#073B4C", width=4), selector=dict(mode='lines'))
 fig_s2 = polish_layout(fig_s2, "Exam Score vs Previous Scores by Internet Access",
                         "Previous Score", "Exam Score")
 fig_s2.update_layout(
@@ -74,6 +76,31 @@ fig_s2.update_layout(
     xaxis=dict(domain=[0, 0.68])
 )
 fig_s2.write_image(os.path.join(plots_dir, "scatter_plots", "Scatter_Previous_Score.png"), scale=2)
+
+# Hours_Studied vs Exam_Score — stratified by Family_Income
+df['Hours_Studied_Jittered'] = df['Hours_Studied'] + np.random.uniform(-0.4, 0.4, size=len(df))
+color_income = {"Low": "#EF476F", "Medium": "#FFD166", "High": "#06D6A0"}
+ordinal_income = ["High", "Medium", "Low"]
+
+fig_s3 = px.scatter(
+    df, x="Hours_Studied_Jittered", y="Exam_Score", color="Family_Income",
+    color_discrete_map=color_income,
+    category_orders={"Family_Income": ordinal_income},
+    opacity=0.3, trendline="ols",
+    marginal_x="histogram", marginal_y="box"
+)
+fig_s3.update_traces(marker=dict(size=4), selector=dict(mode='markers'))
+fig_s3.update_traces(line=dict(color="#073B4C", width=4), selector=dict(mode='lines'))
+fig_s3 = polish_layout(fig_s3, "Exam Score vs Weekly Study Hours by Family Income",
+                        "Weekly Study Hours", "Exam Score")
+fig_s3.update_layout(
+    legend=dict(yanchor="top", y=1, xanchor="left", x=1.05,
+                bgcolor="rgba(255,255,255,0.85)"),
+    margin=dict(r=20),
+    xaxis=dict(domain=[0, 0.68])
+)
+fig_s3.write_image(os.path.join(plots_dir, "scatter_plots", "Scatter_Hours_Score.png"), scale=2)
+
 
 
 # =============================================================================
@@ -176,7 +203,7 @@ fig_par.write_image(os.path.join(plots_dir, "advanced", "ParallelCategories_Back
 # 5. CORRELATION HEATMAP
 # =============================================================================
 num_df = df.select_dtypes(include=[np.number]).drop(
-    columns=['Attendance_Jittered', 'Previous_Scores_Jittered'], errors='ignore'
+    columns=['Attendance_Jittered', 'Previous_Scores_Jittered', 'Hours_Studied_Jittered'], errors='ignore'
 )
 corr_matrix = num_df.corr().round(2)
 
