@@ -68,6 +68,27 @@
 
 ---
 
+**Caption:** Histogram illustrating the distribution of Weekly Study Hours across the student population.
+*(Insert `plots/histograms/Histogram_Hours_Studied.png`)*
+
+**Key Data:**
+| Statistic | Value |
+|---|---|
+| Sample size (n) | 6,607 |
+| Mean | 19.98 |
+| Median | 20.0 |
+| Std Dev | 5.99 |
+| Min | 1 |
+| Q1 | 16 |
+| Q3 | 24 |
+| Max | 44 |
+
+**English Insight:** The `Hours_Studied` distribution approximates a natural bell curve centered perfectly around 20 hours (mean=19.98, median=20.0). The visible left and right tails spread relatively evenly, capturing the minority of students who study either exceptionally little (near 0) or an intense amount (upwards of 40 hours). The integer binning (width=5) clearly highlights the concentration in the 15–25 hours central range.
+
+**中文洞察:** `Hours_Studied` (每周学习时长) 的分布呈现出极其标准的钟形曲线，完美对称地以 20 小时为中心点（均值19.98，中位数20.0）。可见的左右尾部均匀散开，捕捉到了极少数几乎不学习（接近0小时）或学习强度极大（高达40小时以上）的极端学生群体。取整的分箱（距宽=5）清晰地突显了绝大多数学生集中在 15-25 小时的中间地带。
+
+---
+
 ## 2. Violin & Box Plots: Categorical Drivers of Exam Score
 
 > All violin/box plots use `box=True` and `points="outliers"`. Y-axis represents Exam Score (range 55–100). Ordinal categories are sorted High → Medium → Low; binary categories sorted by logical convention (Yes→No, No→Yes as appropriate).

@@ -31,18 +31,62 @@ def polish_layout(fig, title_text, x_title=None, y_title=None, y_range=None):
 # =============================================================================
 # 1. HISTOGRAMS — Pure-count distributions of key numeric inputs
 # Titles: direct business labels, NO chart-type prefix
+# Core Rules: 5-20 non-overlapping bins, equal bin width=(Max-Min)/Bins, span full range.
 # =============================================================================
-fig1 = px.histogram(df, x="Exam_Score", nbins=30, color_discrete_sequence=["#2D6A4F"])
-fig1 = polish_layout(fig1, "Distribution of Exam Scores", "Exam Score", "Count of Students")
+def create_strict_histogram(df, col, title, x_label, color, num_bins, override_min=None, override_max=None):
+    col_min = override_min if override_min is not None else df[col].min()
+    col_max = override_max if override_max is not None else df[col].max()
+    bin_width = (col_max - col_min) / num_bins
+    
+    fig = px.histogram(df, x=col, color_discrete_sequence=[color])
+    # Enforce strict bins spanning exact range with equal width, matching image aesthetic
+    fig.update_traces(
+        xbins=dict(start=col_min, end=col_max, size=bin_width),
+        marker_line_color='black',
+        marker_line_width=1.5
+    )
+    
+    fig.update_layout(
+        title=dict(text=title, x=0.5, xanchor='center'),
+        template="plotly_white",
+        font=dict(family="Arial", size=14),
+        bargap=0,
+        showlegend=False
+    )
+    
+    fig.update_xaxes(
+        title_text=x_label,
+        showgrid=False,
+        showline=True, linewidth=1.5, linecolor='black', # Add black bottom line
+        ticks='outside', tickwidth=1.5, tickcolor='black', ticklen=6,
+        tickmode='linear', tick0=col_min, dtick=bin_width
+    )
+    
+    fig.update_yaxes(
+        title_text="Count of Students",
+        showgrid=False, # Removed gridline to mimic reference image
+        showline=True, linewidth=1.5, linecolor='black', # Add black left line
+        ticks='outside', tickwidth=1.5, tickcolor='black', ticklen=6,
+        rangemode='tozero'
+    )
+    
+    return fig
+
+# 1. Exam_Score: range 55-100. Using 50-100 (span 50), 10 bins (width=5.0)
+fig1 = create_strict_histogram(df, "Exam_Score", "Distribution of Exam Scores", "Exam Score", "#9BC2E6", 10, 50, 100)
 fig1.write_image(os.path.join(plots_dir, "histograms", "Histogram_Exam_Score.png"), scale=2)
 
-fig2 = px.histogram(df, x="Attendance", nbins=20, color_discrete_sequence=["#40916C"])
-fig2 = polish_layout(fig2, "Distribution of Class Attendance (%)", "Attendance Percentage", "Count of Students")
+# 2. Attendance: range 60-100. Using 60-100 (span 40), 8 bins (width=5.0)
+fig2 = create_strict_histogram(df, "Attendance", "Distribution of Class Attendance (%)", "Attendance Percentage", "#9BC2E6", 8, 60, 100)
 fig2.write_image(os.path.join(plots_dir, "histograms", "Histogram_Attendance.png"), scale=2)
 
-fig3 = px.histogram(df, x="Previous_Scores", nbins=30, color_discrete_sequence=["#52B788"])
-fig3 = polish_layout(fig3, "Distribution of Previous Scores", "Previous Score", "Count of Students")
+# 3. Previous_Scores: range 50-100. Using 50-100 (span 50), 10 bins (width=5.0)
+fig3 = create_strict_histogram(df, "Previous_Scores", "Distribution of Previous Scores", "Previous Score", "#9BC2E6", 10, 50, 100)
 fig3.write_image(os.path.join(plots_dir, "histograms", "Histogram_Previous_Scores.png"), scale=2)
+
+# 4. Hours_Studied: range 1-44. Using 0-45 (span 45), 9 bins (width=5.0)
+fig4 = create_strict_histogram(df, "Hours_Studied", "Distribution of Weekly Study Hours", "Hours Studied", "#9BC2E6", 9, 0, 45)
+fig4.write_image(os.path.join(plots_dir, "histograms", "Histogram_Hours_Studied.png"), scale=2)
 
 
 # =============================================================================
