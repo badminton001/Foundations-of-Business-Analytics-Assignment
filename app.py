@@ -1,295 +1,255 @@
 """
-app.py — Academic Performance Dashboard
+app.py — Academic Performance Dashboard (PIXEL-PERFECT FINAL EDITION V7)
+Definitive axial flushing, borderless KPIs, and spatial balance for Heatmap/Scatter.
 """
-
-import sys, os
-sys.path.insert(0, os.path.dirname(__file__))
 
 import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
+import os
 
-from utils.chart_helpers import (
-    load_data, polish_layout,
-    COLOR_MOTIVATION, COLOR_INCOME, COLOR_INTERNET,
-    COLOR_SCHOOL, COLOR_DISABILITY,
-    ORDINAL_MOTIVATION
-)
-
-# ── Page config ───────────────────────────────────────────────────────────────
+# -----------------------------------------------------------------------------
+# 1. Page Config & CSS Styling
+# -----------------------------------------------------------------------------
 st.set_page_config(
-    page_title="Academic Performance Dashboard",
+    page_title="Academic Analytics Dashboard",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
-# ── Global CSS ────────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
-/* Narrow sidebar */
-[data-testid="stSidebar"] { min-width: 180px !important; max-width: 180px !important; }
-[data-testid="stSidebarContent"] { padding: 1rem 0.5rem; }
-
-/* Remove top padding */
-.block-container { padding-top: 1rem !important; padding-bottom: 1rem !important; }
-
-/* Clean, readable page header */
-.dash-header {
-    background-color: #f8f9fa;
-    color: #073B4C; 
-    padding: 12px 20px; 
-    border-radius: 6px;
-    margin-bottom: 15px;
-    border-left: 6px solid #06D6A0;
-}
-.dash-header h1 { margin: 0; font-size: 1.5rem; font-weight: 700; letter-spacing: 0.01em; color: #073B4C; }
-.dash-header p  { margin: 4px 0 0; font-size: 0.85rem; color: #555; }
-
-/* Section headers */
-.sec-hdr {
-    font-size: 1.0rem; font-weight: 700; color: #073B4C;
-    border-bottom: 2px solid #e4e8ee; padding-bottom: 4px;
-    margin: 15px 0 10px; text-transform: uppercase; letter-spacing: 0.05em;
-}
-
-/* KPI cards */
-div[data-testid="metric-container"] {
-    background: #ffffff; border: 1px solid #e4e8ee;
-    border-radius: 6px; padding: 10px 14px !important;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-}
-
-/* Tighter chart margins */
-.js-plotly-plot { margin-bottom: 0 !important; }
+    section[data-testid="stSidebar"] { width: 260px !important; }
+    /* Global container styling */
+    div[data-testid="stVerticalBlockBorderWrapper"] {
+        border-radius: 8px !important;
+        border: 1px solid #E3E5E8 !important;
+        padding: 12px !important;
+        margin-bottom: 15px !important;
+    }
+    .sec-hdr {
+        font-size: 0.95rem; font-weight: 800; color: #6B7280;
+        margin-bottom: 8px; text-transform: capitalize; letter-spacing: 0.05em;
+    }
+    .kpi-box {
+        text-align: center; padding: 12px; background: #FFFFFF; 
+        border: 1px solid #EDF0F3; border-radius: 8px; min-height: 90px;
+    }
+    .kpi-val { font-size: 1.8rem; font-weight: 700; color: #111827; margin-bottom: 2px; }
+    .kpi-lbl { font-size: 0.75rem; color: #6B7280; text-transform: uppercase; font-weight: 600; }
+    .stPlotlyChart { margin-bottom: -15px !important; }
 </style>
 """, unsafe_allow_html=True)
 
+# -----------------------------------------------------------------------------
+# 2. Data Loading & Sidebar
+# -----------------------------------------------------------------------------
+@st.cache_data
+def load_data():
+    return pd.read_csv("data/StudentPerformanceFactors_cleaned.csv")
 
-# ── Data ──────────────────────────────────────────────────────────────────────
-df_full = load_data()
+df_raw = load_data()
 
-# ── Sidebar filters ───────────────────────────────────────────────────────────
-sb = st.sidebar
-sb.markdown("**Filters**")
+st.sidebar.markdown("### Selection Filters")
+sel_school = st.sidebar.selectbox("Institution Type", ["All"] + sorted(df_raw["School_Type"].unique()))
+sel_gender = st.sidebar.selectbox("Student Gender",  ["All"] + sorted(df_raw["Gender"].unique()))
 
-def sb_sel(label, col, options):
-    return sb.selectbox(label, ["All"] + options, key=col)
+df = df_raw.copy()
+if sel_school != "All": df = df[df["School_Type"] == sel_school]
+if sel_gender != "All": df = df[df["Gender"]      == sel_gender]
 
-sel_school   = sb_sel("School Type",    "School_Type",     sorted(df_full["School_Type"].unique()))
-sel_income   = sb_sel("Family Income",  "Family_Income",   ["Low","Medium","High"])
-sel_motiv    = sb_sel("Motivation",     "Motivation_Level",["High","Medium","Low"])
-sel_internet = sb_sel("Internet Access","Internet_Access", ["Yes","No"])
-
-df = df_full.copy()
-if sel_school   != "All": df = df[df["School_Type"]      == sel_school]
-if sel_income   != "All": df = df[df["Family_Income"]    == sel_income]
-if sel_motiv    != "All": df = df[df["Motivation_Level"] == sel_motiv]
-if sel_internet != "All": df = df[df["Internet_Access"]  == sel_internet]
-
-sb.markdown("---")
-sb.metric("Students", f"{len(df):,}")
-
-# ── Dynamic helpers ───────────────────────────────────────────────────────────
-np.random.seed(42)
-df_plot = df.copy()
-df_plot["Att_J"]  = df_plot["Attendance"]      + np.random.uniform(-0.4, 0.4, len(df_plot))
-df_plot["Prev_J"] = df_plot["Previous_Scores"] + np.random.uniform(-0.4, 0.4, len(df_plot))
-
-# ── HEADER ────────────────────────────────────────────────────────────────────
-st.markdown("""
-<div class="dash-header">
-  <h1>Academic Performance Dashboard</h1>
-  <p>Audience: School Administrators &amp; Education Policy Makers | Focus: Discovery of Core Drivers &amp; Systemic Inequalities</p>
-</div>
-""", unsafe_allow_html=True)
-
-# ═══════════════════════════════════════════════════════════════════════════════
-# 1. OVERVIEW: CURRENT PERFORMANCE LANDSCAPE
-# ═══════════════════════════════════════════════════════════════════════════════
-c1,c2,c3,c4,c5 = st.columns(5)
-c1.metric("Students in View",   f"{len(df):,}")
-c2.metric("Mean Exam Score",    f"{df['Exam_Score'].mean():.2f}")
-c3.metric("Avg Attendance",     f"{df['Attendance'].mean():.1f}%")
-c4.metric("Avg Study Hours",    f"{df['Hours_Studied'].mean():.1f}")
-c5.metric("Avg Previous Score", f"{df['Previous_Scores'].mean():.1f}")
-
-st.markdown('<div class="sec-hdr">01 / Score &amp; Attendance Baseline</div>', unsafe_allow_html=True)
-h1, h2 = st.columns(2)
-
-with h1:
-    fig = px.histogram(df, x="Exam_Score", nbins=20, color_discrete_sequence=["#2D6A4F"])
-    fig = polish_layout(fig, "Exam Score Distribution", "Exam Score", "Count of Students")
-    fig.update_traces(marker_line_width=0.5, marker_line_color="white")
-    fig.update_layout(height=260, margin=dict(t=40,b=30,l=50,r=10))
-    st.plotly_chart(fig, use_container_width=True)
-
-with h2:
-    fig = px.histogram(df, x="Attendance", nbins=20, color_discrete_sequence=["#40916C"])
-    fig = polish_layout(fig, "Class Attendance Distribution", "Attendance (%)", "Count of Students")
-    fig.update_traces(marker_line_width=0.5, marker_line_color="white")
-    fig.update_layout(height=260, margin=dict(t=40,b=30,l=50,r=10))
-    st.plotly_chart(fig, use_container_width=True)
-
-# ═══════════════════════════════════════════════════════════════════════════════
-# 2. PERFORMANCE DRIVERS: IDENTIFYING THE LEVERS 
-# ═══════════════════════════════════════════════════════════════════════════════
-st.markdown('<div class="sec-hdr">02 / Behavioural &amp; Resource Drivers</div>', unsafe_allow_html=True)
-
-# Row A: Trend Lines (3 cols)
-l1, l2, l3 = st.columns(3)
-bins = [0, 8, 16, 24, 32, df["Hours_Studied"].max()+1 if len(df)>0 else 100]
-labels = ["0-8","9-16","17-24","25-32","33+"]
-df_line = df.copy()
-df_line["Hrs_Bin"] = pd.cut(df_line["Hours_Studied"], bins=bins, labels=labels, right=True)
-
-with l1:
-    ldf1 = df_line.groupby("Hrs_Bin", observed=True)["Exam_Score"].mean().reset_index()
-    fig1 = px.line(ldf1, x="Hrs_Bin", y="Exam_Score", markers=True)
-    fig1.update_traces(line=dict(color="#118AB2", width=3), marker=dict(size=8, color="#073B4C"))
-    fig1 = polish_layout(fig1, "Avg Score by Weekly Study Hours", "Study Hours", "Avg Exam Score")
-    if not ldf1.empty: fig1.update_yaxes(range=[60, 75])
-    fig1.update_layout(height=240, margin=dict(t=40,b=30,l=50,r=10))
-    st.plotly_chart(fig1, use_container_width=True)
-
-with l2:
-    ldf2 = df.groupby("Sleep_Hours")["Exam_Score"].mean().reset_index()
-    fig2 = px.line(ldf2, x="Sleep_Hours", y="Exam_Score", markers=True)
-    fig2.update_traces(line=dict(color="#EF476F", width=3), marker=dict(size=8, color="#073B4C"))
-    fig2 = polish_layout(fig2, "Avg Score by Nightly Sleep", "Sleep Hours", "Avg Exam Score")
-    fig2.update_xaxes(tick0=4, dtick=1)
-    if not ldf2.empty: fig2.update_yaxes(range=[65, 70])
-    fig2.update_layout(height=240, margin=dict(t=40,b=30,l=50,r=10))
-    st.plotly_chart(fig2, use_container_width=True)
-
-with l3:
-    ldf3 = df.groupby("Tutoring_Sessions")["Exam_Score"].mean().reset_index()
-    fig3 = px.line(ldf3, x="Tutoring_Sessions", y="Exam_Score", markers=True)
-    fig3.update_traces(line=dict(color="#06D6A0", width=3), marker=dict(size=8, color="#073B4C"))
-    fig3 = polish_layout(fig3, "Avg Score by Tutoring Sessions", "Tutoring Sessions", "Avg Exam Score")
-    fig3.update_xaxes(tick0=0, dtick=1)
-    if not ldf3.empty: fig3.update_yaxes(range=[64, 74])
-    fig3.update_layout(height=240, margin=dict(t=40,b=30,l=50,r=10))
-    st.plotly_chart(fig3, use_container_width=True)
-
-# Row B: Advanced Bubble & Scatter (2 cols)
-s1, s2 = st.columns([1.2, 0.8])
-with s1:
-    fig_bub = px.scatter(
-        df_plot, x="Att_J", y="Exam_Score",
-        size="Hours_Studied", color="Motivation_Level",
-        color_discrete_map=COLOR_MOTIVATION,
-        category_orders={"Motivation_Level": ORDINAL_MOTIVATION},
-        opacity=0.4, size_max=22,
+# -----------------------------------------------------------------------------
+# 3. VERBATIM HELPERS (TRUE AXIAL FLUSHING)
+# -----------------------------------------------------------------------------
+def polish_layout(fig, title_text, x_title=None, y_title=None, height=280):
+    fig.update_layout(
+        title=dict(text=title_text, x=0.5, xanchor='center', font=dict(size=14)),
+        template="plotly_white", font=dict(family="Arial", size=12),
+        showlegend=False, bargap=0.1, height=height,
+        margin=dict(t=50, b=50, l=60, r=40)
     )
-    fig_bub = polish_layout(
-        fig_bub,
-        "Synergy: Attendance &times; Study Hours (Bubble Size) &times; Motivation",
-        "Attendance (%)", "Exam Score", show_legend=True,
-    )
-    fig_bub.update_layout(
-        height=320, margin=dict(t=40,b=30,l=50,r=10),
-        legend=dict(title="Motivation", orientation="h", y=-0.25, x=0, font=dict(size=11))
-    )
-    st.plotly_chart(fig_bub, use_container_width=True)
-
-with s2:
-    fig_s2 = px.scatter(
-        df_plot, x="Prev_J", y="Exam_Score", color="Internet_Access",
-        color_discrete_map=COLOR_INTERNET,
-        category_orders={"Internet_Access": ["Yes","No"]},
-        opacity=0.3, trendline="ols",
-    )
-    fig_s2.update_traces(marker=dict(size=4), selector=dict(mode="markers"))
-    fig_s2 = polish_layout(fig_s2, "Exam Score vs Previous Scores (Baseline)", "Previous Score", "Exam Score", show_legend=True)
-    fig_s2.update_layout(
-        height=320, margin=dict(t=40,b=30,l=50,r=10),
-        legend=dict(title="Internet", orientation="h", y=-0.25, x=0, font=dict(size=11))
-    )
-    st.plotly_chart(fig_s2, use_container_width=True)
-
-
-# ═══════════════════════════════════════════════════════════════════════════════
-# 3. EQUITY & SYSTEMIC PIPELINE
-# ═══════════════════════════════════════════════════════════════════════════════
-st.markdown('<div class="sec-hdr">03 / Equity Analysis &amp; Systemic Outcomes</div>', unsafe_allow_html=True)
-
-# Row A: Demographics (4 cols)
-d1, d2, d3, d4 = st.columns(4)
-
-def donut(data, col, name, colors):
-    if len(data) == 0: return go.Figure()
-    pf = data[col].value_counts().reset_index()
-    pf.columns = [col, "Count"]
-    pf = pf.sort_values("Count", ascending=False)
-    fig = px.pie(pf, values="Count", names=col,
-                 color_discrete_sequence=colors, hole=0.45)
-    fig.update_traces(textposition="inside", textinfo="percent+label",
-                      marker=dict(line=dict(color="#fff", width=2)))
-    fig = polish_layout(fig, f"{name}")
-    fig.update_layout(showlegend=False, height=220, margin=dict(t=30,b=5,l=5,r=5))
+    if x_title: fig.update_xaxes(title_text=x_title, showgrid=False)
+    if y_title: fig.update_yaxes(title_text=y_title, showgrid=True, gridcolor='lightgray')
+    else: fig.update_yaxes(showgrid=True, gridcolor='lightgray')
     return fig
 
-with d1:
-    st.plotly_chart(donut(df, "Family_Income", "Family Income", ["#EF476F","#FFD166","#06D6A0"]), use_container_width=True)
-with d2:
-    st.plotly_chart(donut(df, "School_Type", "School Type", ["#118AB2","#EF476F"]), use_container_width=True)
-with d3:
-    st.plotly_chart(donut(df, "Learning_Disabilities", "Learning Disabilities", ["#118AB2","#EF476F"]), use_container_width=True)
-with d4:
-    cl = df.groupby(["School_Type","Internet_Access"]).size().reset_index(name="Count")
-    if not cl.empty:
-        fig_cb = px.bar(cl, x="School_Type", y="Count", color="Internet_Access",
-                        barmode="group", color_discrete_map=COLOR_INTERNET)
-        fig_cb = polish_layout(fig_cb, "School Type x Internet Access", "School Type", "Students", show_legend=True)
-        fig_cb.update_yaxes(range=[0, cl["Count"].max()*1.15])
-        fig_cb.update_layout(
-            legend=dict(title="Internet", orientation="h", y=-0.3, x=0, font=dict(size=10)),
-            height=220, margin=dict(t=30,b=20,l=40,r=10),
-        )
-        st.plotly_chart(fig_cb, use_container_width=True)
+def create_true_flush_histogram(df, col, title, x_label, color, bins_meta):
+    c_min, c_max, n_bins = bins_meta
+    
+    fig = px.histogram(df, x=col, color_discrete_sequence=[color])
+    fig.update_traces(xbins=dict(start=c_min, end=c_max, size=5), marker_line_width=1.0, marker_line_color='black')
+    
+    fig.update_layout(
+        bargap=0, bargroupgap=0,
+        title=dict(text=title, x=0.5, xanchor='center', font=dict(size=16, color='#1F2937')),
+        template="plotly_white", font=dict(family="Arial", size=13),
+        showlegend=False, height=380,
+        margin=dict(t=50, b=50, l=70, r=30)
+    )
+    
+    fig.update_xaxes(
+        range=[c_min, c_max], constrain='domain',
+        title_text=x_label, showgrid=False,
+        showline=True, linewidth=2, linecolor='black',
+        ticks='outside', tickwidth=2, tickcolor='black', ticklen=8,
+        tickmode='linear', tick0=c_min, dtick=5,
+        zeroline=False, fixedrange=True
+    )
+    fig.update_yaxes(
+        rangemode='tozero',
+        title_text="Count of Students", showgrid=False,
+        showline=True, linewidth=2, linecolor='black',
+        ticks='outside', tickwidth=2, tickcolor='black', ticklen=8,
+        zeroline=False, fixedrange=True
+    )
+    return fig
 
-# Row B: Advanced Flow & Heatmap (2 cols)
-adv1, adv2 = st.columns([1.3, 0.7])
+# -----------------------------------------------------------------------------
+# 4. RENDER DASHBOARD
+# -----------------------------------------------------------------------------
+st.markdown("<h2>Academic Performance Analytics Dashboard</h2>", unsafe_allow_html=True)
 
-with adv1:
-    par_df = df.copy()
-    if len(par_df) > 2:
-        par_df["Outcome_Bin"] = pd.qcut(par_df["Exam_Score"], q=3, labels=["Lower 33%","Middle 33%","Top 33%"])
-        for col, order in [
-            ("Family_Income",       ["Low","Medium","High"]),
-            ("Access_to_Resources", ["Low","Medium","High"]),
-            ("Motivation_Level",    ["Low","Medium","High"]),
-        ]:
-            if col in par_df.columns:
-                par_df[col] = pd.Categorical(par_df[col], categories=order, ordered=True)
+# KPI Section - NO Container Border as requested
+k1, k2, k3, k4 = st.columns(4)
+with k1: st.markdown(f'<div class="kpi-box"><div class="kpi-val">{len(df):,}</div><div class="kpi-lbl">Total Students</div></div>', unsafe_allow_html=True)
+with k2: st.markdown(f'<div class="kpi-box"><div class="kpi-val">{df["Exam_Score"].mean():.1f}</div><div class="kpi-lbl">Mean Exam Score</div></div>', unsafe_allow_html=True)
+with k3: st.markdown(f'<div class="kpi-box"><div class="kpi-val">{df["Attendance"].mean():.1f}%</div><div class="kpi-lbl">Avg Attendance</div></div>', unsafe_allow_html=True)
+with k4: st.markdown(f'<div class="kpi-box"><div class="kpi-val">{df["Hours_Studied"].mean():.1f}h</div><div class="kpi-lbl">Study Hours</div></div>', unsafe_allow_html=True)
 
-        fig_par = px.parallel_categories(
-            par_df,
-            dimensions=["Family_Income","Access_to_Resources","Motivation_Level","Outcome_Bin"],
-            color="Exam_Score", color_continuous_scale=px.colors.sequential.Teal,
-        )
-        fig_par.update_layout(
-            title=dict(text="Systemic Pipeline: Socioeconomic Origin &rarr; Academic Outcome", x=0.5, xanchor="center", font=dict(size=14)),
-            font=dict(family="Arial", size=11),
-            height=300,
-            margin=dict(l=40, r=110, t=50, b=30),
-            coloraxis_colorbar=dict(x=1.02, y=0.55, len=0.6, title=dict(text="Score", side="top")),
-            paper_bgcolor="rgba(0,0,0,0)",
-        )
-        st.plotly_chart(fig_par, use_container_width=True)
+# Section 1
+st.markdown('<div class="sec-hdr">01 / Frequency Distribution & Baseline Profiles</div>', unsafe_allow_html=True)
+with st.container(border=True):
+    col_h1, col_h2 = st.columns(2)
+    with col_h1:
+        st.plotly_chart(create_true_flush_histogram(df, "Exam_Score", "Distribution of Exam Scores", "Final Exam Score Result", "#9BC2E6", (55, 100, 9)), use_container_width=True)
+    with col_h2:
+        st.plotly_chart(create_true_flush_histogram(df, "Attendance", "Distribution of Class Attendance (%)", "Course Attendance Percentage", "#9BC2E6", (60, 100, 8)), use_container_width=True)
 
-with adv2:
-    num_df = df.select_dtypes(include=[np.number])
-    if len(num_df.columns) > 1 and len(df) > 1:
-        corr_mat = num_df.corr().round(2)
-        fig_heat = px.imshow(corr_mat, text_auto=True, aspect="auto",
-                             color_continuous_scale="RdBu_r", zmin=-1, zmax=1)
-        fig_heat.update_layout(
-            title=dict(text="Feature Correlation Matrix", x=0.5, xanchor="center", font=dict(size=14)),
-            font=dict(family="Arial", size=9),
-            height=300, margin=dict(t=50,b=10,l=10,r=10),
-            paper_bgcolor="rgba(0,0,0,0)"
+# Section 2
+st.markdown('<div class="sec-hdr">02 / Demographic Segmentation & Socioeconomic Context</div>', unsafe_allow_html=True)
+with st.container(border=True):
+    c1, c2, c3, c4 = st.columns(4)
+    pie_configs = [
+        ('Family_Income', 'Family Income', ["#EF476F", "#FFD166", "#06D6A0"], ["Low", "Medium", "High"]),
+        ('School_Type', 'School Type', ["#118AB2", "#EF476F"], None),
+        ('Learning_Disabilities', 'Disabilities', ["#118AB2", "#FFD166"], None),
+        ('Parental_Education_Level', 'Parent Education', ["#EF476F", "#FFD166", "#06D6A0", "#118AB2", "#073B4C"], None),
+    ]
+    for idx, (col, name, colors, order) in enumerate(pie_configs):
+        p_df = df[col].value_counts().reset_index(); p_df.columns = [col, 'Count']
+        if order: p_df[col] = pd.Categorical(p_df[col], categories=order, ordered=True); p_df = p_df.sort_values(col)
+        else: p_df = p_df.sort_values('Count', ascending=False)
+        f_p = px.pie(p_df, values='Count', names=col, color_discrete_sequence=colors, hole=0.4)
+        f_p.update_traces(textposition='inside', textinfo='percent+label', marker=dict(line=dict(color='#FFFFFF', width=2)))
+        f_p = polish_layout(f_p, f"Distribution by {name}", height=250)
+        f_p.update_layout(showlegend=False, margin=dict(t=30, b=20, l=10, r=10))
+        target = [c1, c2, c3, c4][idx]
+        with target: st.plotly_chart(f_p, use_container_width=True)
+
+# Section 3
+st.markdown('<div class="sec-hdr">03 / Behavioral Dynamics: Performance Drivers</div>', unsafe_allow_html=True)
+with st.container(border=True):
+    temp_df = df.copy(); np.random.seed(42)
+    temp_df['Attendance_Jittered'] = temp_df['Attendance'] + np.random.uniform(-0.4, 0.4, size=len(temp_df))
+    o_mot = ["Low", "Medium", "High"]
+    c_mot = {"High": "#06D6A0", "Medium": "#118AB2", "Low": "#EF476F"}
+    
+    f_s1 = px.scatter(temp_df, x="Attendance_Jittered", y="Exam_Score", color="Motivation_Level",
+                      color_discrete_map=c_mot, category_orders={"Motivation_Level": o_mot},
+                      opacity=0.6, marginal_y="box", trendline="ols", trendline_scope="overall")
+    
+    # Precise trace correction for professional aesthetics
+    for trace in f_s1.data:
+        if trace.type == 'box':
+            # Remove messy individual points to make the box plots clean
+            trace.update(line=dict(width=2), opacity=0.9, boxpoints=False)
+        if "Trendline" in getattr(trace, 'name', ''):
+            # Ensure bold black contrast on the main plot
+            trace.update(line=dict(color='black', width=3.5), xaxis='x1', yaxis='y1')
+            
+    f_s1.update_traces(marker=dict(size=5, line=dict(width=0.3, color='white')), selector=dict(mode='markers', type='scatter', xaxis='x1'))
+    
+    f_s1.update_layout(
+        title=dict(text="Analysis of Course Attendance and Motivation on Exam Outcomes", x=0.5, xanchor='center', font=dict(size=16)),
+        template="plotly_white", font=dict(family="Arial", size=12), height=450,
+        showlegend=True,
+        legend=dict(
+            orientation="h", y=1.01, x=0.5, xanchor="center", yanchor="bottom", title="",
+            font=dict(size=12)
+        ),
+        margin=dict(r=30, t=70, b=50, l=80),
+        xaxis=dict(domain=[0, 0.78], title="Course Attendance Percentage (%)", showgrid=False, range=[59, 101]),
+        yaxis=dict(title="Final Exam Score Requirement", showgrid=True, gridcolor='#F3F4F6', range=[55, 105]),
+        xaxis2=dict(domain=[0.82, 1.0], title=None, showticklabels=False, showline=False, showgrid=False),
+        yaxis2=dict(title=None, showticklabels=False)
+    )
+    st.plotly_chart(f_s1, use_container_width=True)
+
+with st.container(border=True):
+    t1, t2, t3 = st.columns(3)
+    with t1:
+        line_df = df.groupby('Sleep_Hours', as_index=False, observed=True)['Exam_Score'].mean()
+        f_l = px.line(line_df, x='Sleep_Hours', y="Exam_Score", markers=True)
+        f_l.update_traces(line=dict(color='#EF476F', width=3), marker=dict(size=10, color="#1F2937"))
+        f_l.update_xaxes(tickmode='linear', tick0=4, dtick=1, range=[3.5, 10.5])
+        f_l.update_yaxes(range=[59, 76], tickmode='array', tickvals=[60, 65, 70, 75])
+        st.plotly_chart(polish_layout(f_l, "Trend of Average Exam Score by Nightly Sleep Hours", "Nightly Sleep Hours", "Average Exam Score", height=300), use_container_width=True)
+    with t2:
+        # Binned Study Hours
+        bins = [0, 8, 16, 24, 32, 44]
+        labels = ['0-8 hrs', '9-16 hrs', '17-24 hrs', '25-32 hrs', '33-44 hrs']
+        df_copy = df.copy()
+        df_copy['Hours_Studied_Bin'] = pd.cut(df_copy['Hours_Studied'], bins=bins, labels=labels, right=True, include_lowest=True)
+        line_df2 = df_copy.groupby('Hours_Studied_Bin', as_index=False, observed=True)['Exam_Score'].mean()
+        f_l2 = px.line(line_df2, x='Hours_Studied_Bin', y="Exam_Score", markers=True)
+        f_l2.update_traces(line=dict(color='#118AB2', width=3), marker=dict(size=10, color="#1F2937"))
+        f_l2.update_xaxes(range=[-0.5, 4.5])
+        f_l2.update_yaxes(range=[63, 73], tickmode='array', tickvals=[64, 66, 68, 70, 72])
+        st.plotly_chart(polish_layout(f_l2, "Trend of Average Exam Score by Weekly Study Hours", "Weekly Study Hours Category", "Average Exam Score", height=300), use_container_width=True)
+    with t3:
+        l_df3 = df.groupby('Tutoring_Sessions', as_index=False, observed=True)['Exam_Score'].mean()
+        f_l3 = px.line(l_df3, x='Tutoring_Sessions', y="Exam_Score", markers=True)
+        f_l3.update_traces(line=dict(color='#06D6A0', width=3), marker=dict(size=10, color="#1F2937"))
+        f_l3.update_xaxes(tickmode='linear', tick0=0, dtick=1, range=[-0.5, 8.5])
+        f_l3.update_yaxes(range=[65, 73], tickmode='array', tickvals=[66, 68, 70, 72])
+        st.plotly_chart(polish_layout(f_l3, "Trend of Average Exam Score by Tutoring Frequency", "Number of Tutoring Sessions", "Average Exam Score", height=300), use_container_width=True)
+
+# Section 4
+st.markdown('<div class="sec-hdr">04 / Systemic Analysis: Inequity & Interdependency</div>', unsafe_allow_html=True)
+with st.container(border=True):
+    a1, a2 = st.columns([1.1, 1])
+    with a1:
+        f_c = px.density_contour(df, x="Previous_Scores", y="Exam_Score", marginal_x="histogram", marginal_y="histogram", color_discrete_sequence=['#EF476F'])
+        f_c.update_layout(
+            title=dict(text="Density Distribution of Final Exam by Previous Scores", x=0.5, xanchor='center', font=dict(size=14)),
+            height=360,
+            xaxis=dict(title="Previous Exam Scores"),
+            yaxis=dict(title="Final Exam Score")
         )
-        st.plotly_chart(fig_heat, use_container_width=True)
+        st.plotly_chart(f_c, use_container_width=True)
+    with a2:
+        num_cols = df.select_dtypes(include=[np.number]).columns.tolist()
+        c_m = df[num_cols].corr().round(2)
+        f_h = px.imshow(c_m, text_auto=True, color_continuous_scale="RdBu_r", zmin=-1, zmax=1)
+        # Centering heatmap and colorbar
+        f_h.update_layout(title=dict(text="Pairwise Correlation Analysis of Key Metrics", x=0.5, xanchor='center', font=dict(size=15)),
+                          font=dict(size=10), height=360, margin=dict(t=60, b=20, l=50, r=80),
+                          coloraxis_colorbar=dict(x=0.88, thickness=15, len=0.85, title="Correlation"))
+        st.plotly_chart(f_h, use_container_width=True)
+
+with st.container(border=True):
+    bx1, bx2 = st.columns(2)
+    with bx1:
+        f_v = px.box(df, x='Access_to_Resources', y="Exam_Score", color='Access_to_Resources',
+                     color_discrete_map={"High": "#06D6A0", "Medium": "#118AB2", "Low": "#EF476F"},
+                     category_orders={'Access_to_Resources': ["High", "Medium", "Low"]})
+        st.plotly_chart(polish_layout(f_v, "Distribution of Exam Score by Resource Equity", "Resource Equity Level", "Final Exam Score", height=320), use_container_width=True)
+    with bx2:
+        peer_df = df.groupby('Peer_Influence', as_index=False)['Exam_Score'].mean().sort_values('Exam_Score', ascending=False)
+        f_p2 = px.bar(peer_df, x='Peer_Influence', y='Exam_Score', color='Peer_Influence',
+                      color_discrete_sequence=["#118AB2", "#FFD166", "#EF476F"])
+        f_p2 = polish_layout(f_p2, "Average Exam Score by Peer Influence", "Peer Influence Level", "Average Exam Score", height=320)
+        f_p2.update_yaxes(range=[60, 72])
+        st.plotly_chart(f_p2, use_container_width=True)

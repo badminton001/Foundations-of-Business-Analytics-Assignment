@@ -127,6 +127,19 @@ for col, name, cat_palette, order in [
     fig_v.update_layout(showlegend=False)
     fig_v.write_image(os.path.join(plots_dir, "box_violin_plots", f"BoxViolin_{col}.png"), scale=2)
 
+# Added: Access to Resources Box Plot for Systemic Equity analysis
+for col, name, cat_palette, order in [
+    ('Access_to_Resources', 'Access to Resources', {"High": "#06D6A0", "Medium": "#118AB2", "Low": "#EF476F"}, ["High", "Medium", "Low"]),
+    ]:
+    fig_v = px.box(
+        df, x=col, y="Exam_Score", color=col,
+        color_discrete_map=cat_palette,
+        category_orders={col: order}
+    )
+    fig_v = polish_layout(fig_v, f"Distribution of Exam Scores by {name}", name, "Exam Score")
+    fig_v.update_layout(showlegend=False)
+    fig_v.write_image(os.path.join(plots_dir, "box_violin_plots", f"BoxViolin_{col}.png"), scale=2)
+
 
 # =============================================================================
 # 3. DONUT CHARTS — Proportional demographic sub-population breakdown
@@ -136,7 +149,8 @@ for col, name, cat_palette, order in [
 for col, name, colors, order in [
     ('Family_Income',        'Family Income Levels', ["#EF476F", "#FFD166", "#06D6A0"], ["Low", "Medium", "High"]),
     ('School_Type',          'School Type',           ["#118AB2", "#EF476F"],             None),
-    ('Learning_Disabilities','Learning Disabilities', ["#073B4C", "#FFD166"],             None),
+    ('Learning_Disabilities','Learning Disabilities', ["#118AB2", "#FFD166"],             None),
+    ('Parental_Education_Level', 'Parental Education', ["#EF476F", "#FFD166", "#06D6A0", "#118AB2", "#073B4C"], None),
     ]:
     pie_df = df[col].value_counts().reset_index()
     pie_df.columns = [col, 'Count']

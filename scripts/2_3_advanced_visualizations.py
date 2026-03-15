@@ -8,6 +8,8 @@ data_path = os.path.join(base_dir, "data", "StudentPerformanceFactors_cleaned.cs
 plots_dir = os.path.join(base_dir, "plots")
 
 df = pd.read_csv(data_path)
+# Shuffle dataframe globally to prevent Z-order category overlap in scatter/bubble plots
+df = df.sample(frac=1, random_state=42).reset_index(drop=True)
 
 # Ensure output subdirectories exist
 for sub in ["scatter_plots", "advanced", "heatmaps"]:
@@ -30,7 +32,10 @@ np.random.seed(42)
 df['Attendance_Jittered']     = df['Attendance']     + np.random.uniform(-0.4, 0.4, size=len(df))
 df['Previous_Scores_Jittered']= df['Previous_Scores']+ np.random.uniform(-0.4, 0.4, size=len(df))
 
-ordinal_motivation = ["High", "Medium", "Low"]
+# To fix Z-order overplotting without ugly hollow rings:
+# We sort the order so that the largest/densest class ('Low' red) is drawn LAST in the list (which means First on canvas/Bottom layer)
+# and 'High' (green) is drawn FIRST in the list (Last on canvas/Top layer).
+ordinal_motivation = ["Low", "Medium", "High"]
 color_motivation   = {"High": "#06D6A0", "Medium": "#118AB2", "Low": "#EF476F"}
 
 
@@ -43,10 +48,10 @@ fig_s1 = px.scatter(
     df, x="Attendance_Jittered", y="Exam_Score", color="Motivation_Level",
     color_discrete_map=color_motivation,
     category_orders={"Motivation_Level": ordinal_motivation},
-    opacity=0.3, trendline="ols",
+    opacity=0.5, trendline="ols",
     marginal_x="histogram", marginal_y="box"
 )
-fig_s1.update_traces(marker=dict(size=4), selector=dict(mode='markers'))
+fig_s1.update_traces(marker=dict(size=6, line=dict(width=0.5, color='white')), selector=dict(mode='markers', type='scatter'))
 fig_s1.update_traces(line=dict(color="#073B4C", width=4), selector=dict(mode='lines'))
 fig_s1 = polish_layout(fig_s1, "Exam Score vs Class Attendance by Motivation Level",
                         "Attendance (%)", "Exam Score")
@@ -62,10 +67,10 @@ fig_s2 = px.scatter(
     df, x="Previous_Scores_Jittered", y="Exam_Score", color="Internet_Access",
     color_discrete_map={"Yes": "#118AB2", "No": "#EF476F"},
     category_orders={"Internet_Access": ["Yes", "No"]},
-    opacity=0.3, trendline="ols",
+    opacity=0.5, trendline="ols",
     marginal_x="histogram", marginal_y="box"
 )
-fig_s2.update_traces(marker=dict(size=4), selector=dict(mode='markers'))
+fig_s2.update_traces(marker=dict(size=6, line=dict(width=0.5, color='white')), selector=dict(mode='markers', type='scatter'))
 fig_s2.update_traces(line=dict(color="#073B4C", width=4), selector=dict(mode='lines'))
 fig_s2 = polish_layout(fig_s2, "Exam Score vs Previous Scores by Internet Access",
                         "Previous Score", "Exam Score")
@@ -86,10 +91,10 @@ fig_s3 = px.scatter(
     df, x="Hours_Studied_Jittered", y="Exam_Score", color="Family_Income",
     color_discrete_map=color_income,
     category_orders={"Family_Income": ordinal_income},
-    opacity=0.3, trendline="ols",
+    opacity=0.5, trendline="ols",
     marginal_x="histogram", marginal_y="box"
 )
-fig_s3.update_traces(marker=dict(size=4), selector=dict(mode='markers'))
+fig_s3.update_traces(marker=dict(size=6, line=dict(width=0.5, color='white')), selector=dict(mode='markers', type='scatter'))
 fig_s3.update_traces(line=dict(color="#073B4C", width=4), selector=dict(mode='lines'))
 fig_s3 = polish_layout(fig_s3, "Exam Score vs Weekly Study Hours by Family Income",
                         "Weekly Study Hours", "Exam Score")
@@ -118,21 +123,42 @@ fig_contour.write_image(os.path.join(plots_dir, "scatter_plots", "DensityContour
 
 
 # =============================================================================
-# 3. MULTI-DIMENSIONAL BUBBLE CHART
+# 3. MULTI-DIMENSIONAL BUBBLE CHART (FACETED)
 # =============================================================================
 fig_bubble = px.scatter(
     df, x="Attendance_Jittered", y="Exam_Score",
     size="Hours_Studied", color="Motivation_Level",
     color_discrete_map=color_motivation,
     category_orders={"Motivation_Level": ordinal_motivation},
-    opacity=0.45, size_max=22
+    facet_col="Motivation_Level",
+    labels={
+        "Exam_Score": "Exam Score",
+        "Attendance_Jittered": "Attendance (%)"
+    },
+    opacity=0.45, size_max=18,
+    render_mode="svg"
 )
-fig_bubble = polish_layout(fig_bubble,
-    "Exam Score vs Attendance by Motivation Level (Bubble Size = Study Hours)",
-    "Attendance (%)", "Exam Score")
-fig_bubble.update_layout(legend=dict(yanchor="top", y=1, xanchor="left", x=1.05,
-                                      bgcolor="rgba(255,255,255,0.85)"))
+# Make points slightly translucent but vibrant, no borders required since they are faceted
+fig_bubble.update_traces(marker=dict(line=dict(width=0)), selector=dict(mode='markers', type='scatter'))
+
+# Layout polishing specific to facets
+fig_bubble.update_layout(
+    title=dict(text="Exam Score vs Attendance by Motivation Level (Bubble Size = Study Hours)", x=0.5, xanchor='center'),
+    template="plotly_white",
+    width=1000, height=600,   # Widen to give 3 facets enough breathing room
+    font=dict(family="Arial", size=14),
+    showlegend=False
+)
+# Simply update gridlines and boundaries globally; Plotly Express automatically 
+# handles deduplicating the Y-axis and X-axis titles natively on facets if left alone.
+fig_bubble.update_yaxes(showgrid=True, gridcolor='lightgray', range=[50, 105])
+fig_bubble.update_xaxes(showgrid=False, range=[58, 102])
+
+# Clean up facet subplot titles (remove the 'Motivation_Level=' prefix)
+fig_bubble.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
+
 fig_bubble.write_image(os.path.join(plots_dir, "advanced", "Bubble_Attendance_Score_Hrs.png"), scale=2)
+
 
 
 # =============================================================================
