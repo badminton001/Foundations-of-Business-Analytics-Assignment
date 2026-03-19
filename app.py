@@ -1,6 +1,10 @@
 """
-app.py — Academic Performance Dashboard (PIXEL-PERFECT FINAL EDITION V7)
-Definitive axial flushing, borderless KPIs, and spatial balance for Heatmap/Scatter.
+app.py — Academic Performance Analytics Dashboard
+Narrative: Equity, Effort, and Engagement
+Audience:  Education policymakers and school administrators
+All charts faithfully match the parameters in 2_2_basic_visualizations.py
+and 2_3_advanced_visualizations.py (font size 14, marker sizes, colours,
+gridcolor='lightgray', ticks, etc.).
 """
 
 import streamlit as st
@@ -8,248 +12,638 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
-import os
 
-# -----------------------------------------------------------------------------
-# 1. Page Config & CSS Styling
-# -----------------------------------------------------------------------------
+# =============================================================================
+# PAGE CONFIG
+# =============================================================================
 st.set_page_config(
-    page_title="Academic Analytics Dashboard",
+    page_title="Academic Performance Analytics",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
+# =============================================================================
+# CSS
+# =============================================================================
 st.markdown("""
 <style>
-    section[data-testid="stSidebar"] { width: 260px !important; }
-    /* Global container styling */
-    div[data-testid="stVerticalBlockBorderWrapper"] {
-        border-radius: 8px !important;
-        border: 1px solid #E3E5E8 !important;
-        padding: 12px !important;
-        margin-bottom: 15px !important;
-    }
-    .sec-hdr {
-        font-size: 0.95rem; font-weight: 800; color: #6B7280;
-        margin-bottom: 8px; text-transform: capitalize; letter-spacing: 0.05em;
-    }
-    .kpi-box {
-        text-align: center; padding: 12px; background: #FFFFFF; 
-        border: 1px solid #EDF0F3; border-radius: 8px; min-height: 90px;
-    }
-    .kpi-val { font-size: 1.8rem; font-weight: 700; color: #111827; margin-bottom: 2px; }
-    .kpi-lbl { font-size: 0.75rem; color: #6B7280; text-transform: uppercase; font-weight: 600; }
-    .stPlotlyChart { margin-bottom: -15px !important; }
+html, body, [data-testid="stAppViewContainer"] { background: #EEF2F7; }
+[data-testid="stAppViewContainer"] > .main   { background: #EEF2F7; padding-top: 0 !important; }
+[data-testid="stHeader"]                      { background: transparent; }
+.block-container { padding: 0 2.4rem 3.5rem 2.4rem !important; max-width: 100% !important; }
+div[data-testid="stVerticalBlockBorderWrapper"] { border: none !important; padding: 0 !important; }
+.stPlotlyChart { margin-bottom: 0 !important; }
+
+/* Hero */
+.dash-hero {
+    background: linear-gradient(130deg, #073B4C 0%, #0A5C78 55%, #118AB2 100%);
+    padding: 32px 44px 28px 44px;
+    border-radius: 0 0 20px 20px;
+    margin: 0 -2.4rem 30px -2.4rem;
+}
+.dash-hero h1 {
+    font-size: 1.62rem; font-weight: 800; color: #FFFFFF;
+    margin: 0 0 7px 0; letter-spacing: -0.025em; font-family: Arial, sans-serif;
+}
+.dash-hero .sub {
+    font-size: 0.84rem; color: rgba(255,255,255,0.72);
+    line-height: 1.55; font-family: Arial, sans-serif; margin: 0;
+}
+
+/* KPI strip */
+.kpi-strip { display: flex; gap: 14px; margin-bottom: 30px; }
+.kpi-card {
+    flex: 1; background: #FFFFFF; border-radius: 12px;
+    padding: 18px 22px 15px 22px;
+    border-top: 4px solid #118AB2;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.kpi-card.c-teal  { border-top-color: #06D6A0; }
+.kpi-card.c-amber { border-top-color: #FFD166; }
+.kpi-card.c-navy  { border-top-color: #073B4C; }
+.kpi-card.c-blue  { border-top-color: #118AB2; }
+.kpi-val { font-size: 1.90rem; font-weight: 800; color: #0D1B2A; line-height: 1; margin-bottom: 6px; }
+.kpi-lbl { font-size: 0.68rem; color: #64748B; text-transform: uppercase; font-weight: 700; letter-spacing: 0.09em; }
+.kpi-sub { font-size: 0.75rem; color: #94A3B8; margin-top: 3px; }
+
+/* Section headers */
+.sec-wrap { margin: 36px 0 14px 0; }
+.sec-eyebrow { font-size: 0.66rem; font-weight: 800; color: #118AB2;
+               letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 4px; }
+.sec-title { font-size: 1.08rem; font-weight: 800; color: #0D1B2A;
+             margin: 0 0 5px 0; font-family: Arial, sans-serif; }
+.sec-desc  { font-size: 0.81rem; color: #64748B; margin: 0; line-height: 1.50; }
+.sec-rule  { border: none; border-top: 1.5px solid #DDE3EC; margin: 12px 0 18px 0; }
+
+/* Sidebar */
+[data-testid="stSidebar"]   { background: #0D2B3E !important; }
+[data-testid="stSidebar"] * { color: #CBD5E1 !important; }
+[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] h3 { color: #FFFFFF !important; }
+[data-testid="stSidebar"] .stSelectbox > div > div {
+    background: #1A3A50; border-color: #2D5068; border-radius: 7px;
+}
+[data-testid="stSidebar"] hr { border-color: #1E4060; }
 </style>
 """, unsafe_allow_html=True)
 
-# -----------------------------------------------------------------------------
-# 2. Data Loading & Sidebar
-# -----------------------------------------------------------------------------
+# =============================================================================
+# DATA  — mirror 2_3_advanced_visualizations.py exactly
+# =============================================================================
 @st.cache_data
 def load_data():
-    return pd.read_csv("data/StudentPerformanceFactors_cleaned.csv")
+    df = pd.read_csv("data/StudentPerformanceFactors_cleaned.csv")
+    # Shuffle to prevent z-order overplotting (same as script: random_state=42)
+    df = df.sample(frac=1, random_state=42).reset_index(drop=True)
+    # Jitter arrays (same seed & magnitude as script)
+    np.random.seed(42)
+    df["Attendance_Jittered"]      = df["Attendance"]      + np.random.uniform(-0.4, 0.4, len(df))
+    df["Previous_Scores_Jittered"] = df["Previous_Scores"] + np.random.uniform(-0.4, 0.4, len(df))
+    df["Hours_Studied_Jittered"]   = df["Hours_Studied"]   + np.random.uniform(-0.4, 0.4, len(df))
+    return df
 
 df_raw = load_data()
 
-st.sidebar.markdown("### Selection Filters")
-sel_school = st.sidebar.selectbox("Institution Type", ["All"] + sorted(df_raw["School_Type"].unique()))
-sel_gender = st.sidebar.selectbox("Student Gender",  ["All"] + sorted(df_raw["Gender"].unique()))
+# =============================================================================
+# SIDEBAR
+# =============================================================================
+with st.sidebar:
+    st.markdown("### Filters")
+    st.markdown("---")
+    sel_school = st.selectbox(
+        "Institution Type",
+        ["All"] + sorted(df_raw["School_Type"].dropna().unique()),
+    )
+    sel_income = st.selectbox("Family Income", ["All", "High", "Medium", "Low"])
+    sel_motiv  = st.selectbox("Motivation Level", ["All", "High", "Medium", "Low"])
 
 df = df_raw.copy()
 if sel_school != "All": df = df[df["School_Type"] == sel_school]
-if sel_gender != "All": df = df[df["Gender"]      == sel_gender]
+if sel_income != "All": df = df[df["Family_Income"] == sel_income]
+if sel_motiv  != "All": df = df[df["Motivation_Level"] == sel_motiv]
 
-# -----------------------------------------------------------------------------
-# 3. VERBATIM HELPERS (TRUE AXIAL FLUSHING)
-# -----------------------------------------------------------------------------
-def polish_layout(fig, title_text, x_title=None, y_title=None, height=280):
+# =============================================================================
+# CHART HELPERS — parameters copied verbatim from the static scripts
+# =============================================================================
+
+# ── Matches polish_layout() in both static scripts (font size=14, lightgray) ──
+def polish_layout(fig, title_text, x_title=None, y_title=None, h=320):
     fig.update_layout(
-        title=dict(text=title_text, x=0.5, xanchor='center', font=dict(size=14)),
-        template="plotly_white", font=dict(family="Arial", size=12),
-        showlegend=False, bargap=0.1, height=height,
-        margin=dict(t=50, b=50, l=60, r=40)
+        title=dict(text=title_text, x=0.5, xanchor="center"),
+        template="plotly_white",
+        font=dict(family="Arial", size=14),
+        showlegend=False,
+        bargap=0.1,
+        height=h,
     )
-    if x_title: fig.update_xaxes(title_text=x_title, showgrid=False)
-    if y_title: fig.update_yaxes(title_text=y_title, showgrid=True, gridcolor='lightgray')
-    else: fig.update_yaxes(showgrid=True, gridcolor='lightgray')
+    if x_title:
+        fig.update_xaxes(title_text=x_title, showgrid=False)
+    if y_title:
+        fig.update_yaxes(title_text=y_title, showgrid=True, gridcolor="lightgray")
+    else:
+        fig.update_yaxes(showgrid=True, gridcolor="lightgray")
     return fig
 
-def create_true_flush_histogram(df, col, title, x_label, color, bins_meta):
-    c_min, c_max, n_bins = bins_meta
-    
-    fig = px.histogram(df, x=col, color_discrete_sequence=[color])
-    fig.update_traces(xbins=dict(start=c_min, end=c_max, size=5), marker_line_width=1.0, marker_line_color='black')
-    
+
+# ── Matches create_strict_histogram() in 2_2_basic_visualizations.py ──
+# Dashboard uses numpy pre-computed bins + px.bar (instead of px.histogram) so that
+# each bar's position and width are explicitly specified — this eliminates the
+# Plotly.js auto-range gap that appears when bins start exactly at the axis edge.
+def make_histogram(col, title, x_label, color, num_bins,
+                   override_min=None, override_max=None,
+                   x_dtick=None, x_range=None, h=370):
+    col_min   = override_min if override_min is not None else df[col].min()
+    col_max   = override_max if override_max is not None else df[col].max()
+    bin_width = (col_max - col_min) / num_bins
+    tick_step = x_dtick if x_dtick is not None else bin_width
+
+    # Pre-compute with numpy. go.Bar (not px.bar) is used so x is a true linear
+    # numeric axis — px.bar coerces numeric x to categorical, breaking range/width.
+    counts, edges = np.histogram(df[col].dropna(), bins=num_bins, range=(col_min, col_max))
+    midpoints = (edges[:-1] + edges[1:]) / 2  # bar centres; bar 1 centre=55.5 → left edge=55.0
+
+    fig = go.Figure()
+    fig.add_trace(go.Bar(
+        x=midpoints,
+        y=counts,
+        width=bin_width,
+        marker_color=color,
+        marker_line_color="black",
+        marker_line_width=1.5,
+    ))
+    effective_range = x_range if x_range else [col_min, col_max]
     fig.update_layout(
-        bargap=0, bargroupgap=0,
-        title=dict(text=title, x=0.5, xanchor='center', font=dict(size=16, color='#1F2937')),
-        template="plotly_white", font=dict(family="Arial", size=13),
-        showlegend=False, height=380,
-        margin=dict(t=50, b=50, l=70, r=30)
+        title=dict(text=title, x=0.5, xanchor="center"),
+        template="plotly_white",
+        font=dict(family="Arial", size=14),
+        bargap=0,
+        bargroupgap=0,
+        showlegend=False,
+        height=h,
     )
-    
     fig.update_xaxes(
-        range=[c_min, c_max], constrain='domain',
-        title_text=x_label, showgrid=False,
-        showline=True, linewidth=2, linecolor='black',
-        ticks='outside', tickwidth=2, tickcolor='black', ticklen=8,
-        tickmode='linear', tick0=c_min, dtick=5,
-        zeroline=False, fixedrange=True
+        title_text=x_label,
+        showgrid=False,
+        showline=True, linewidth=1.5, linecolor="black",
+        ticks="outside", tickwidth=1.5, tickcolor="black", ticklen=6,
+        tickmode="linear", tick0=col_min, dtick=tick_step,
+        range=effective_range,
+        autorange=False,
     )
     fig.update_yaxes(
-        rangemode='tozero',
-        title_text="Count of Students", showgrid=False,
-        showline=True, linewidth=2, linecolor='black',
-        ticks='outside', tickwidth=2, tickcolor='black', ticklen=8,
-        zeroline=False, fixedrange=True
+        title_text="Count of Students",
+        showgrid=False,
+        showline=True, linewidth=1.5, linecolor="black",
+        ticks="outside", tickwidth=1.5, tickcolor="black", ticklen=6,
+        rangemode="tozero",
     )
     return fig
 
-# -----------------------------------------------------------------------------
-# 4. RENDER DASHBOARD
-# -----------------------------------------------------------------------------
-st.markdown("<h2>Academic Performance Analytics Dashboard</h2>", unsafe_allow_html=True)
 
-# KPI Section - NO Container Border as requested
-k1, k2, k3, k4 = st.columns(4)
-with k1: st.markdown(f'<div class="kpi-box"><div class="kpi-val">{len(df):,}</div><div class="kpi-lbl">Total Students</div></div>', unsafe_allow_html=True)
-with k2: st.markdown(f'<div class="kpi-box"><div class="kpi-val">{df["Exam_Score"].mean():.1f}</div><div class="kpi-lbl">Mean Exam Score</div></div>', unsafe_allow_html=True)
-with k3: st.markdown(f'<div class="kpi-box"><div class="kpi-val">{df["Attendance"].mean():.1f}%</div><div class="kpi-lbl">Avg Attendance</div></div>', unsafe_allow_html=True)
-with k4: st.markdown(f'<div class="kpi-box"><div class="kpi-val">{df["Hours_Studied"].mean():.1f}h</div><div class="kpi-lbl">Study Hours</div></div>', unsafe_allow_html=True)
-
-# Section 1
-st.markdown('<div class="sec-hdr">01 / Frequency Distribution & Baseline Profiles</div>', unsafe_allow_html=True)
-with st.container(border=True):
-    col_h1, col_h2 = st.columns(2)
-    with col_h1:
-        st.plotly_chart(create_true_flush_histogram(df, "Exam_Score", "Distribution of Exam Scores", "Final Exam Score Result", "#9BC2E6", (55, 100, 9)), use_container_width=True)
-    with col_h2:
-        st.plotly_chart(create_true_flush_histogram(df, "Attendance", "Distribution of Class Attendance (%)", "Course Attendance Percentage", "#9BC2E6", (60, 100, 8)), use_container_width=True)
-
-# Section 2
-st.markdown('<div class="sec-hdr">02 / Demographic Segmentation & Socioeconomic Context</div>', unsafe_allow_html=True)
-with st.container(border=True):
-    c1, c2, c3, c4 = st.columns(4)
-    pie_configs = [
-        ('Family_Income', 'Family Income', ["#EF476F", "#FFD166", "#06D6A0"], ["Low", "Medium", "High"]),
-        ('School_Type', 'School Type', ["#118AB2", "#EF476F"], None),
-        ('Learning_Disabilities', 'Disabilities', ["#118AB2", "#FFD166"], None),
-        ('Parental_Education_Level', 'Parent Education', ["#EF476F", "#FFD166", "#06D6A0", "#118AB2", "#073B4C"], None),
-    ]
-    for idx, (col, name, colors, order) in enumerate(pie_configs):
-        p_df = df[col].value_counts().reset_index(); p_df.columns = [col, 'Count']
-        if order: p_df[col] = pd.Categorical(p_df[col], categories=order, ordered=True); p_df = p_df.sort_values(col)
-        else: p_df = p_df.sort_values('Count', ascending=False)
-        f_p = px.pie(p_df, values='Count', names=col, color_discrete_sequence=colors, hole=0.4)
-        f_p.update_traces(textposition='inside', textinfo='percent+label', marker=dict(line=dict(color='#FFFFFF', width=2)))
-        f_p = polish_layout(f_p, f"Distribution by {name}", height=250)
-        f_p.update_layout(showlegend=False, margin=dict(t=30, b=20, l=10, r=10))
-        target = [c1, c2, c3, c4][idx]
-        with target: st.plotly_chart(f_p, use_container_width=True)
-
-# Section 3
-st.markdown('<div class="sec-hdr">03 / Behavioral Dynamics: Performance Drivers</div>', unsafe_allow_html=True)
-with st.container(border=True):
-    temp_df = df.copy(); np.random.seed(42)
-    temp_df['Attendance_Jittered'] = temp_df['Attendance'] + np.random.uniform(-0.4, 0.4, size=len(temp_df))
-    o_mot = ["Low", "Medium", "High"]
-    c_mot = {"High": "#06D6A0", "Medium": "#118AB2", "Low": "#EF476F"}
-    
-    f_s1 = px.scatter(temp_df, x="Attendance_Jittered", y="Exam_Score", color="Motivation_Level",
-                      color_discrete_map=c_mot, category_orders={"Motivation_Level": o_mot},
-                      opacity=0.6, marginal_y="box", trendline="ols", trendline_scope="overall")
-    
-    # Precise trace correction for professional aesthetics
-    for trace in f_s1.data:
-        if trace.type == 'box':
-            # Remove messy individual points to make the box plots clean
-            trace.update(line=dict(width=2), opacity=0.9, boxpoints=False)
-        if "Trendline" in getattr(trace, 'name', ''):
-            # Ensure bold black contrast on the main plot
-            trace.update(line=dict(color='black', width=3.5), xaxis='x1', yaxis='y1')
-            
-    f_s1.update_traces(marker=dict(size=5, line=dict(width=0.3, color='white')), selector=dict(mode='markers', type='scatter', xaxis='x1'))
-    
-    f_s1.update_layout(
-        title=dict(text="Analysis of Course Attendance and Motivation on Exam Outcomes", x=0.5, xanchor='center', font=dict(size=16)),
-        template="plotly_white", font=dict(family="Arial", size=12), height=450,
-        showlegend=True,
-        legend=dict(
-            orientation="h", y=1.01, x=0.5, xanchor="center", yanchor="bottom", title="",
-            font=dict(size=12)
-        ),
-        margin=dict(r=30, t=70, b=50, l=80),
-        xaxis=dict(domain=[0, 0.78], title="Course Attendance Percentage (%)", showgrid=False, range=[59, 101]),
-        yaxis=dict(title="Final Exam Score Requirement", showgrid=True, gridcolor='#F3F4F6', range=[55, 105]),
-        xaxis2=dict(domain=[0.82, 1.0], title=None, showticklabels=False, showline=False, showgrid=False),
-        yaxis2=dict(title=None, showticklabels=False)
+# ── Matches violin block in 2_2_basic_visualizations.py ──
+def make_violin(col, title, x_label, color_map, cat_order,
+                filter_vals=None, h=330):
+    d = df if filter_vals is None else df[~df[col].isin(filter_vals)]
+    fig = px.violin(
+        d, x=col, y="Exam_Score", color=col,
+        color_discrete_map=color_map,
+        box=True, points="outliers",
+        category_orders={col: cat_order},
     )
-    st.plotly_chart(f_s1, use_container_width=True)
+    fig = polish_layout(fig, title, x_label, "Exam Score", h=h)
+    fig.update_layout(showlegend=False)
+    return fig
 
-with st.container(border=True):
-    t1, t2, t3 = st.columns(3)
-    with t1:
-        line_df = df.groupby('Sleep_Hours', as_index=False, observed=True)['Exam_Score'].mean()
-        f_l = px.line(line_df, x='Sleep_Hours', y="Exam_Score", markers=True)
-        f_l.update_traces(line=dict(color='#EF476F', width=3), marker=dict(size=10, color="#1F2937"))
-        f_l.update_xaxes(tickmode='linear', tick0=4, dtick=1, range=[3.5, 10.5])
-        f_l.update_yaxes(range=[59, 76], tickmode='array', tickvals=[60, 65, 70, 75])
-        st.plotly_chart(polish_layout(f_l, "Trend of Average Exam Score by Nightly Sleep Hours", "Nightly Sleep Hours", "Average Exam Score", height=300), use_container_width=True)
-    with t2:
-        # Binned Study Hours
-        bins = [0, 8, 16, 24, 32, 44]
-        labels = ['0-8 hrs', '9-16 hrs', '17-24 hrs', '25-32 hrs', '33-44 hrs']
-        df_copy = df.copy()
-        df_copy['Hours_Studied_Bin'] = pd.cut(df_copy['Hours_Studied'], bins=bins, labels=labels, right=True, include_lowest=True)
-        line_df2 = df_copy.groupby('Hours_Studied_Bin', as_index=False, observed=True)['Exam_Score'].mean()
-        f_l2 = px.line(line_df2, x='Hours_Studied_Bin', y="Exam_Score", markers=True)
-        f_l2.update_traces(line=dict(color='#118AB2', width=3), marker=dict(size=10, color="#1F2937"))
-        f_l2.update_xaxes(range=[-0.5, 4.5])
-        f_l2.update_yaxes(range=[63, 73], tickmode='array', tickvals=[64, 66, 68, 70, 72])
-        st.plotly_chart(polish_layout(f_l2, "Trend of Average Exam Score by Weekly Study Hours", "Weekly Study Hours Category", "Average Exam Score", height=300), use_container_width=True)
-    with t3:
-        l_df3 = df.groupby('Tutoring_Sessions', as_index=False, observed=True)['Exam_Score'].mean()
-        f_l3 = px.line(l_df3, x='Tutoring_Sessions', y="Exam_Score", markers=True)
-        f_l3.update_traces(line=dict(color='#06D6A0', width=3), marker=dict(size=10, color="#1F2937"))
-        f_l3.update_xaxes(tickmode='linear', tick0=0, dtick=1, range=[-0.5, 8.5])
-        f_l3.update_yaxes(range=[65, 73], tickmode='array', tickvals=[66, 68, 70, 72])
-        st.plotly_chart(polish_layout(f_l3, "Trend of Average Exam Score by Tutoring Frequency", "Number of Tutoring Sessions", "Average Exam Score", height=300), use_container_width=True)
 
-# Section 4
-st.markdown('<div class="sec-hdr">04 / Systemic Analysis: Inequity & Interdependency</div>', unsafe_allow_html=True)
-with st.container(border=True):
-    a1, a2 = st.columns([1.1, 1])
-    with a1:
-        f_c = px.density_contour(df, x="Previous_Scores", y="Exam_Score", marginal_x="histogram", marginal_y="histogram", color_discrete_sequence=['#EF476F'])
-        f_c.update_layout(
-            title=dict(text="Density Distribution of Final Exam by Previous Scores", x=0.5, xanchor='center', font=dict(size=14)),
-            height=360,
-            xaxis=dict(title="Previous Exam Scores"),
-            yaxis=dict(title="Final Exam Score")
-        )
-        st.plotly_chart(f_c, use_container_width=True)
-    with a2:
-        num_cols = df.select_dtypes(include=[np.number]).columns.tolist()
-        c_m = df[num_cols].corr().round(2)
-        f_h = px.imshow(c_m, text_auto=True, color_continuous_scale="RdBu_r", zmin=-1, zmax=1)
-        # Centering heatmap and colorbar
-        f_h.update_layout(title=dict(text="Pairwise Correlation Analysis of Key Metrics", x=0.5, xanchor='center', font=dict(size=15)),
-                          font=dict(size=10), height=360, margin=dict(t=60, b=20, l=50, r=80),
-                          coloraxis_colorbar=dict(x=0.88, thickness=15, len=0.85, title="Correlation"))
-        st.plotly_chart(f_h, use_container_width=True)
+# ── Matches line-chart block in 2_2_basic_visualizations.py ──
+def make_line(x_col, title, color, x_label,
+              bin_spec=None, int_ticks=False, h=290):
+    if bin_spec:
+        bins, labels = bin_spec
+        tmp = df.copy()
+        tmp[x_col] = pd.cut(tmp[x_col], bins=bins, labels=labels, right=True)
+        ld = tmp.groupby(x_col, as_index=False, observed=True)["Exam_Score"].mean()
+    else:
+        ld = df.groupby(x_col, as_index=False, observed=True)["Exam_Score"].mean()
 
-with st.container(border=True):
-    bx1, bx2 = st.columns(2)
-    with bx1:
-        f_v = px.box(df, x='Access_to_Resources', y="Exam_Score", color='Access_to_Resources',
-                     color_discrete_map={"High": "#06D6A0", "Medium": "#118AB2", "Low": "#EF476F"},
-                     category_orders={'Access_to_Resources': ["High", "Medium", "Low"]})
-        st.plotly_chart(polish_layout(f_v, "Distribution of Exam Score by Resource Equity", "Resource Equity Level", "Final Exam Score", height=320), use_container_width=True)
-    with bx2:
-        peer_df = df.groupby('Peer_Influence', as_index=False)['Exam_Score'].mean().sort_values('Exam_Score', ascending=False)
-        f_p2 = px.bar(peer_df, x='Peer_Influence', y='Exam_Score', color='Peer_Influence',
-                      color_discrete_sequence=["#118AB2", "#FFD166", "#EF476F"])
-        f_p2 = polish_layout(f_p2, "Average Exam Score by Peer Influence", "Peer Influence Level", "Average Exam Score", height=320)
-        f_p2.update_yaxes(range=[60, 72])
-        st.plotly_chart(f_p2, use_container_width=True)
+    fig = px.line(ld, x=x_col, y="Exam_Score", markers=True, line_shape="linear")
+    fig.update_traces(
+        mode="lines+markers+text",
+        line=dict(color=color, width=4),
+        marker=dict(size=12, color=color),
+        text=[f"{v:.1f}" for v in ld["Exam_Score"]],
+        textposition="top center",
+        textfont=dict(size=11, color="#1F2937"),
+    )
+    fig = polish_layout(fig, title, x_label, "Average Exam Score", h=h)
+    y_lo = max(50, int(ld["Exam_Score"].min()) - 3)
+    y_hi = int(ld["Exam_Score"].max()) + 4
+    fig.update_yaxes(range=[y_lo, y_hi])
+    if int_ticks:
+        fig.update_xaxes(tick0=0, dtick=1, zeroline=False)
+    else:
+        fig.update_xaxes(zeroline=False)
+    return fig
+
+
+# =============================================================================
+# HERO
+# =============================================================================
+st.markdown("""
+<div class="dash-hero">
+  <h1>Academic Performance Analytics Dashboard</h1>
+  <p class="sub">
+    Examining behavioral, environmental, and socioeconomic drivers of student exam outcomes
+    to identify evidence-based interventions for administrators and policymakers.
+  </p>
+</div>
+""", unsafe_allow_html=True)
+
+# =============================================================================
+# KPI STRIP
+# =============================================================================
+n          = len(df)
+avg_score  = df["Exam_Score"].mean()
+avg_attend = df["Attendance"].mean()
+avg_hours  = df["Hours_Studied"].mean()
+pct_inet   = (df["Internet_Access"] == "Yes").mean() * 100
+
+st.markdown(f"""
+<div class="kpi-strip">
+  <div class="kpi-card c-navy">
+    <div class="kpi-val">{n:,}</div>
+    <div class="kpi-lbl">Students Analysed</div>
+  </div>
+  <div class="kpi-card c-blue">
+    <div class="kpi-val">{avg_score:.1f}</div>
+    <div class="kpi-lbl">Mean Exam Score</div>
+    <div class="kpi-sub">out of 100</div>
+  </div>
+  <div class="kpi-card c-teal">
+    <div class="kpi-val">{avg_attend:.1f}%</div>
+    <div class="kpi-lbl">Avg Class Attendance</div>
+  </div>
+  <div class="kpi-card c-amber">
+    <div class="kpi-val">{avg_hours:.1f} h</div>
+    <div class="kpi-lbl">Avg Study Hours / Wk</div>
+  </div>
+  <div class="kpi-card c-teal">
+    <div class="kpi-val">{pct_inet:.1f}%</div>
+    <div class="kpi-lbl">Internet Access</div>
+  </div>
+</div>
+""", unsafe_allow_html=True)
+
+# =============================================================================
+# SECTION 1 — PERFORMANCE BASELINE
+# Two charts: score histogram + primary scatter (attendance × score by motivation)
+# =============================================================================
+st.markdown("""
+<div class="sec-wrap">
+  <div class="sec-eyebrow">01 — Performance Baseline</div>
+  <div class="sec-title">Score Distribution and the Engagement–Performance Link</div>
+  <div class="sec-desc">
+    The exam score distribution reveals a tight cluster around 67–70, exposing a performance ceiling.
+    Plotting attendance against scores — coloured by motivation level — uncovers a compounding effect:
+    highly motivated students convert each attendance percentage point into measurably better outcomes.
+  </div>
+</div>
+<hr class="sec-rule">
+""", unsafe_allow_html=True)
+
+col_h, col_s1 = st.columns([1, 1.65])
+
+with col_h:
+    # Chart 1 — Exam Score Histogram
+    # Matches: num_bins=45, override_min=55, override_max=100, color="#9BC2E6"
+    fig1 = make_histogram(
+        "Exam_Score", "Distribution of Exam Scores",
+        "Exam Score", "#9BC2E6", 45, 55, 100,
+        x_dtick=5, x_range=[55, 100], h=430
+    )
+    st.plotly_chart(fig1, use_container_width=True)
+
+with col_s1:
+    # Chart 2 — Scatter: Attendance × Score by Motivation
+    # Matches: Scatter_Attendance_Score.png parameters exactly
+    ordinal_motivation = ["Low", "Medium", "High"]
+    color_motivation   = {"High": "#06D6A0", "Medium": "#118AB2", "Low": "#EF476F"}
+
+    fig2 = px.scatter(
+        df, x="Attendance_Jittered", y="Exam_Score",
+        color="Motivation_Level",
+        color_discrete_map=color_motivation,
+        category_orders={"Motivation_Level": ordinal_motivation},
+        opacity=0.5, trendline="ols",
+        marginal_x="histogram", marginal_y="box",
+        labels={"Attendance_Jittered": "Attendance (%)",
+                "Exam_Score": "Exam Score"},
+    )
+    fig2.update_traces(
+        marker=dict(size=6, line=dict(width=0.5, color="white")),
+        selector=dict(mode="markers", type="scatter"),
+    )
+    fig2.update_traces(
+        line=dict(width=2.5),
+        selector=dict(mode="lines"),
+    )
+    fig2 = polish_layout(fig2,
+        "Exam Score vs Class Attendance by Motivation Level",
+        "Attendance (%)", "Exam Score", h=430)
+    fig2.update_layout(
+        showlegend=True,
+        legend=dict(title_text="Motivation Level",
+                    yanchor="top", y=1, xanchor="left", x=1.05,
+                    bgcolor="rgba(255,255,255,0.85)"),
+        margin=dict(r=140),
+        xaxis=dict(domain=[0, 0.68]),
+    )
+    fig2.update_layout(xaxis3=dict(title_text=""))
+    st.plotly_chart(fig2, use_container_width=True)
+
+# =============================================================================
+# SECTION 2 — BEHAVIORAL ANALYSIS
+# Scatter Hours × Score by Income + two line charts stacked
+# =============================================================================
+st.markdown("""
+<div class="sec-wrap">
+  <div class="sec-eyebrow">02 — Behavioral Levers</div>
+  <div class="sec-title">Study Hours, Tutoring, and the Socioeconomic Lens</div>
+  <div class="sec-desc">
+    Additional study hours and tutoring sessions produce consistent score gains.
+    Stratifying hours by family income reveals that high-income students achieve
+    equivalent scores with fewer hours — evidence of structural resource advantages
+    beyond raw effort.
+  </div>
+</div>
+<hr class="sec-rule">
+""", unsafe_allow_html=True)
+
+col_s2, col_lines = st.columns([1.5, 1])
+
+with col_s2:
+    # Chart 3 — Scatter: Study Hours × Score by Family Income
+    # Matches: Scatter_Hours_Score.png parameters exactly
+    color_income   = {"Low": "#EF476F", "Medium": "#FFD166", "High": "#06D6A0"}
+    ordinal_income = ["High", "Medium", "Low"]
+
+    fig3 = px.scatter(
+        df, x="Hours_Studied_Jittered", y="Exam_Score",
+        color="Family_Income",
+        color_discrete_map=color_income,
+        category_orders={"Family_Income": ordinal_income},
+        opacity=0.5, trendline="ols",
+        marginal_x="histogram", marginal_y="box",
+        labels={"Hours_Studied_Jittered": "Weekly Study Hours",
+                "Exam_Score": "Exam Score"},
+    )
+    fig3.update_traces(
+        marker=dict(size=6, line=dict(width=0.5, color="white")),
+        selector=dict(mode="markers", type="scatter"),
+    )
+    fig3.update_traces(
+        line=dict(width=2.5),
+        selector=dict(mode="lines"),
+    )
+    fig3 = polish_layout(fig3,
+        "Exam Score vs Weekly Study Hours by Family Income",
+        "Weekly Study Hours", "Exam Score", h=430)
+    fig3.update_layout(
+        showlegend=True,
+        legend=dict(title_text="Family Income",
+                    yanchor="top", y=1, xanchor="left", x=1.05,
+                    bgcolor="rgba(255,255,255,0.85)"),
+        margin=dict(r=140),
+        xaxis=dict(domain=[0, 0.68]),
+    )
+    fig3.update_layout(xaxis3=dict(title_text=""))
+    st.plotly_chart(fig3, use_container_width=True)
+
+with col_lines:
+    # Chart 4 — Line: Study Hours → Score
+    # Matches: Line_Hours_Studied.png — bins and labels from script
+    hrs_max = int(df["Hours_Studied"].max())  # 44
+    fig4 = make_line(
+        "Hours_Studied",
+        "Trend of Average Exam Score by Weekly Study Hours",
+        "#118AB2", "Weekly Study Hours",
+        bin_spec=(
+            [0, 8, 16, 24, 32, df["Hours_Studied"].max()],
+            ["0–8 hrs", "9–16 hrs", "17–24 hrs", "25–32 hrs", f"33–{hrs_max} hrs"],
+        ),
+        h=205,
+    )
+    st.plotly_chart(fig4, use_container_width=True)
+
+    # Chart 5 — Line: Tutoring Sessions → Score
+    # Matches: Line_Tutoring_Sessions.png — tick0=0, dtick=1
+    fig5 = make_line(
+        "Tutoring_Sessions",
+        "Trend of Average Exam Score by Tutoring Sessions",
+        "#06D6A0", "Number of Tutoring Sessions",
+        int_ticks=True, h=205,
+    )
+    st.plotly_chart(fig5, use_container_width=True)
+
+# =============================================================================
+# SECTION 3 — SUPPORT ENVIRONMENT
+# 3 violin plots: Motivation, Parental Involvement, Teacher Quality
+# =============================================================================
+st.markdown("""
+<div class="sec-wrap">
+  <div class="sec-eyebrow">03 — Support Environment</div>
+  <div class="sec-title">Motivation, Parental Involvement, and Teacher Quality</div>
+  <div class="sec-desc">
+    Internal motivation produces the widest performance spread of any single factor.
+    Parental involvement and teacher quality each independently shift the median
+    score upward — with their combined effect exceeding either factor alone.
+  </div>
+</div>
+<hr class="sec-rule">
+""", unsafe_allow_html=True)
+
+v1, v2, v3 = st.columns(3)
+ORD = ["High", "Medium", "Low"]
+PAL = {"High": "#06D6A0", "Medium": "#118AB2", "Low": "#EF476F"}
+
+with v1:
+    # Chart 6 — Violin: Motivation Level
+    st.plotly_chart(
+        make_violin("Motivation_Level",
+                    "Distribution of Exam Scores by Motivation Level",
+                    "Motivation Level", PAL, ORD),
+        use_container_width=True,
+    )
+with v2:
+    # Chart 7 — Violin: Parental Involvement
+    st.plotly_chart(
+        make_violin("Parental_Involvement",
+                    "Distribution of Exam Scores by Parental Involvement",
+                    "Parental Involvement", PAL, ORD),
+        use_container_width=True,
+    )
+with v3:
+    # Chart 8 — Violin: Teacher Quality  (filter Unknown)
+    st.plotly_chart(
+        make_violin("Teacher_Quality",
+                    "Distribution of Exam Scores by Teacher Quality",
+                    "Teacher Quality", PAL, ORD, filter_vals=["Unknown"]),
+        use_container_width=True,
+    )
+
+# =============================================================================
+# SECTION 4 — SOCIOECONOMIC IMPACT
+# 3 violin plots: Family Income, Access to Resources, Parental Education Level
+# =============================================================================
+st.markdown("""
+<div class="sec-wrap">
+  <div class="sec-eyebrow">04 — Socioeconomic Impact</div>
+  <div class="sec-title">Income, Resource Access, and Intergenerational Education Effects</div>
+  <div class="sec-desc">
+    Family income, access to learning resources, and parental education collectively
+    define the structural ceiling on student performance. These factors represent
+    systemic equity gaps that cannot be closed by effort alone and require policy-level interventions.
+  </div>
+</div>
+<hr class="sec-rule">
+""", unsafe_allow_html=True)
+
+e1, e2, e3 = st.columns(3)
+
+with e1:
+    # Chart 9 — Violin: Family Income
+    # Family Income uses Medium=#FFD166 (amber), not #118AB2 blue
+    pal_income = {"High": "#06D6A0", "Medium": "#FFD166", "Low": "#EF476F"}
+    st.plotly_chart(
+        make_violin("Family_Income",
+                    "Distribution of Exam Scores by Family Income",
+                    "Family Income", pal_income, ORD),
+        use_container_width=True,
+    )
+with e2:
+    # Chart 10 — Violin: Access to Resources
+    st.plotly_chart(
+        make_violin("Access_to_Resources",
+                    "Distribution of Exam Scores by Access to Resources",
+                    "Access to Resources", PAL, ORD),
+        use_container_width=True,
+    )
+with e3:
+    # Chart 11 — Violin: Parental Education Level  (filter Unknown / Others)
+    pal_edu = {"Postgraduate": "#06D6A0", "College": "#FFD166", "High School": "#EF476F"}
+    edu_order = ["Postgraduate", "College", "High School"]
+    st.plotly_chart(
+        make_violin("Parental_Education_Level",
+                    "Distribution of Exam Scores by Parental Education Level",
+                    "Parental Education Level", pal_edu, edu_order,
+                    filter_vals=["Unknown", "Others"]),
+        use_container_width=True,
+    )
+
+# =============================================================================
+# SECTION 5 — SYSTEMIC ANALYSIS
+# Correlation heatmap (left) + Cross-tab heatmap Motivation × Parental (right)
+# Replaces Parallel Categories: the cross-tab is cleaner and more actionable.
+# =============================================================================
+st.markdown("""
+<div class="sec-wrap">
+  <div class="sec-eyebrow">05 — Systemic Analysis</div>
+  <div class="sec-title">Correlations and the Compound Effect of Motivation and Parental Support</div>
+  <div class="sec-desc">
+    The correlation matrix quantifies all pairwise numerical relationships — attendance and
+    previous scores emerge as the strongest predictors. The cross-tab reveals that
+    parental involvement can partially compensate for low motivation: a student with low
+    motivation but high parental involvement (67.7) outperforms a highly motivated student
+    with low parental support (66.8).
+  </div>
+</div>
+<hr class="sec-rule">
+""", unsafe_allow_html=True)
+
+sys_l, sys_r = st.columns(2)
+
+with sys_l:
+    # Chart 12 — Correlation Heatmap
+    # Matches: Heatmap_Correlation.png exactly (textfont=13, font=14, RdBu_r, thickness=18, len=0.85)
+    num_df = df.select_dtypes(include=[np.number]).drop(
+        columns=["Attendance_Jittered", "Previous_Scores_Jittered",
+                 "Hours_Studied_Jittered", "Sleep_Hours_Jittered"],
+        errors="ignore",
+    )
+    corr_matrix = num_df.corr().round(2)
+    label_map = {
+        "Hours_Studied": "Hours Studied", "Attendance": "Attendance",
+        "Sleep_Hours": "Sleep Hours", "Previous_Scores": "Previous Scores",
+        "Tutoring_Sessions": "Tutoring Sessions",
+        "Physical_Activity": "Physical Activity", "Exam_Score": "Exam Score",
+    }
+    corr_display = corr_matrix.rename(index=label_map, columns=label_map)
+
+    fig12 = px.imshow(
+        corr_display, text_auto=".2f", aspect="auto",
+        color_continuous_scale="RdBu_r", zmin=-1, zmax=1,
+    )
+    fig12.update_traces(textfont=dict(size=13))
+    fig12.update_layout(
+        title=dict(text="Pairwise Correlations among Numerical Variables",
+                   x=0.5, xanchor="center"),
+        template="plotly_white",
+        font=dict(family="Arial", size=14),
+        height=440,
+        margin=dict(t=52, b=30, l=140, r=30),
+        paper_bgcolor="white",
+        coloraxis_colorbar=dict(
+            title=dict(text="Correlation", side="top"),
+            thickness=18, len=0.85,
+        ),
+    )
+    st.plotly_chart(fig12, use_container_width=True)
+
+with sys_r:
+    # Chart 13 — Cross-tab Heatmap: Motivation × Parental Involvement → Mean Exam Score
+    # Matches: Heatmap_MeanScore_Motivation_Parental.png exactly
+    # (textfont=16, font=14, RdYlGn, zmin/zmax from data, thickness=18, len=0.8)
+    cross_order_mot = ["Low", "Medium", "High"]
+    cross_order_par = ["Low", "Medium", "High"]
+    pivot_df = (
+        df.groupby(["Motivation_Level", "Parental_Involvement"], observed=True)["Exam_Score"]
+        .mean().round(1).reset_index()
+        .pivot(index="Motivation_Level", columns="Parental_Involvement", values="Exam_Score")
+    )
+    pivot_df = pivot_df.loc[cross_order_mot, cross_order_par]
+
+    fig13 = px.imshow(
+        pivot_df, text_auto=True, aspect="auto",
+        color_continuous_scale="RdYlGn",
+        zmin=pivot_df.values.min() - 0.5,
+        zmax=pivot_df.values.max() + 0.5,
+        labels=dict(x="Parental Involvement",
+                    y="Motivation Level", color="Avg Exam Score"),
+    )
+    fig13.update_traces(textfont=dict(size=16))
+    fig13.update_layout(
+        title=dict(text="Average Exam Score by Motivation Level and Parental Involvement",
+                   x=0.5, xanchor="center"),
+        template="plotly_white",
+        font=dict(family="Arial", size=14),
+        height=440,
+        margin=dict(t=52, b=30, l=110, r=30),
+        paper_bgcolor="white",
+        coloraxis_colorbar=dict(
+            title=dict(text="Avg Score", side="top"),
+            thickness=18, len=0.8,
+        ),
+        xaxis=dict(title_text="Parental Involvement", side="bottom"),
+        yaxis=dict(title_text="Motivation Level"),
+    )
+    st.plotly_chart(fig13, use_container_width=True)
+
+# =============================================================================
+# FOOTER
+# =============================================================================
+st.markdown("""
+<hr style="border:none;border-top:1.5px solid #DDE3EC;margin:40px 0 18px 0;">
+<p style="text-align:center;font-size:0.73rem;color:#94A3B8;font-family:Arial;">
+    Academic Performance Analytics Dashboard &nbsp;&nbsp;|&nbsp;&nbsp;
+    Foundations of Business Analytics
+</p>
+""", unsafe_allow_html=True)
