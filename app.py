@@ -300,11 +300,11 @@ st.markdown(f"""
 st.markdown("""
 <div class="sec-wrap">
   <div class="sec-eyebrow">01 — Performance Baseline</div>
-  <div class="sec-title">Score Distribution and the Engagement–Performance Link</div>
+  <div class="sec-title">Score Distribution and the Engagement-Performance Link</div>
   <div class="sec-desc">
-    The exam score distribution reveals a tight cluster around 67–70, exposing a performance ceiling.
-    Plotting attendance against scores — coloured by motivation level — uncovers a compounding effect:
-    highly motivated students convert each attendance percentage point into measurably better outcomes.
+    The exam score distribution reveals a tight cluster around 65–69 (IQR = 4 points), exposing a performance ceiling.
+    Plotting attendance against scores, coloured by motivation level, confirms that the positive
+    attendance-performance relationship holds consistently across all motivation levels.
   </div>
 </div>
 <hr class="sec-rule">
@@ -369,10 +369,10 @@ st.markdown("""
   <div class="sec-eyebrow">02 — Behavioral Levers</div>
   <div class="sec-title">Study Hours, Tutoring, and the Socioeconomic Lens</div>
   <div class="sec-desc">
-    Additional study hours and tutoring sessions produce consistent score gains.
-    Stratifying hours by family income reveals that high-income students achieve
-    equivalent scores with fewer hours — evidence of structural resource advantages
-    beyond raw effort.
+    Additional study hours produce steady score gains, while tutoring follows an inverted-U
+    pattern that is beneficial up to about 6 sessions, after which returns diminish.
+    Stratifying hours by family income reveals that at equivalent study time, high-income
+    students score marginally higher, suggesting structural resource advantages beyond raw effort.
   </div>
 </div>
 <hr class="sec-rule">
@@ -453,9 +453,9 @@ st.markdown("""
   <div class="sec-eyebrow">03 — Support Environment</div>
   <div class="sec-title">Motivation, Parental Involvement, and Teacher Quality</div>
   <div class="sec-desc">
-    Internal motivation produces the widest performance spread of any single factor.
-    Parental involvement and teacher quality each independently shift the median
-    score upward — with their combined effect exceeding either factor alone.
+    Motivation level widens the performance variance without substantially shifting the median.
+    Parental involvement and teacher quality each independently shift the score distribution
+    upward, with higher levels consistently associated with better outcomes.
   </div>
 </div>
 <hr class="sec-rule">
@@ -549,8 +549,8 @@ st.markdown("""
   <div class="sec-eyebrow">05 — Systemic Analysis</div>
   <div class="sec-title">Correlations and the Compound Effect of Motivation and Parental Support</div>
   <div class="sec-desc">
-    The correlation matrix quantifies all pairwise numerical relationships — attendance and
-    previous scores emerge as the strongest predictors. The cross-tab reveals that
+    The correlation matrix quantifies all pairwise numerical relationships. Attendance and
+    study hours emerge as the two strongest predictors. The cross-tab reveals that
     parental involvement can partially compensate for low motivation: a student with low
     motivation but high parental involvement (67.7) outperforms a highly motivated student
     with low parental support (66.8).
