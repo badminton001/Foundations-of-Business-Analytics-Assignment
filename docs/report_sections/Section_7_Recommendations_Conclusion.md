@@ -1,4 +1,4 @@
-# 7.0 Strategic Recommendations and Conclusion
+# 7.0 Strategic Recommendations & Conclusion
 
 ## 7.1 Evidence-Based Intervention Framework
 
@@ -10,6 +10,8 @@ The convergence of descriptive statistics (Section 2), visual analytics (Section
 
 **Recommendation 1: Attendance Monitoring and Early-Warning System**
 
+**Table 8: Evidence for Recommendation 1**
+
 | Evidence Source | Finding |
 |----------------|---------|
 | Correlation analysis (Section 4.6) | Attendance has the strongest correlation with Exam Score (r = 0.581) |
@@ -20,6 +22,8 @@ The convergence of descriptive statistics (Section 2), visual analytics (Section
 *Action:* Deploy a real-time attendance tracking system with automated alerts when a student's cumulative attendance drops below 75%. The logistic regression classifier (AUC = 0.995) can be integrated as a backend risk-scoring engine, combining attendance with other behavioural signals to generate a composite risk probability for each student.
 
 **Recommendation 2: Study Quality Enhancement Programme**
+
+**Table 9: Evidence for Recommendation 2**
 
 | Evidence Source | Finding |
 |----------------|---------|
@@ -35,6 +39,8 @@ The convergence of descriptive statistics (Section 2), visual analytics (Section
 
 **Recommendation 3: Parental Engagement Initiative**
 
+**Table 10: Evidence for Recommendation 3**
+
 | Evidence Source | Finding |
 |----------------|---------|
 | Violin plot (Section 3.3) | Parental Involvement produces the second-largest High-Low mean gap (1.73 points) |
@@ -44,6 +50,8 @@ The convergence of descriptive statistics (Section 2), visual analytics (Section
 *Action:* Launch a structured parental engagement programme (workshops, progress report access, communication channels with teachers). The cross-tab analysis demonstrates that parental involvement can partially compensate for low student motivation — making it a more reliable lever than motivation-targeting programmes, which depend on the student's internal state.
 
 **Recommendation 4: Resource Access Equalisation**
+
+**Table 11: Evidence for Recommendation 4**
 
 | Evidence Source | Finding |
 |----------------|---------|
@@ -59,6 +67,8 @@ The convergence of descriptive statistics (Section 2), visual analytics (Section
 
 **Recommendation 5: Tutoring Session Optimisation**
 
+**Table 12: Evidence for Recommendation 5**
+
 | Evidence Source | Finding |
 |----------------|---------|
 | Line chart (Section 3.5) | Inverted-U pattern: scores peak at 5--6 sessions/week, then plateau or decline |
@@ -67,6 +77,8 @@ The convergence of descriptive statistics (Section 2), visual analytics (Section
 *Action:* Recommend an optimal tutoring dosage of 3--6 sessions per week. Students attending fewer than 3 should be encouraged to increase; students attending more than 6 should be counselled to reallocate time to independent study. Excessive tutoring may create dependency that undermines self-directed learning skills.
 
 **Recommendation 6: Teacher Quality and Institutional Equity**
+
+**Table 13: Evidence for Recommendation 6**
 
 | Evidence Source | Finding |
 |----------------|---------|
@@ -82,6 +94,8 @@ The convergence of descriptive statistics (Section 2), visual analytics (Section
 
 The following phased roadmap translates the recommendations into operational steps:
 
+**Table 14: Deployment Roadmap**
+
 | Phase | Timeline | Actions | Expected Outcome |
 |-------|----------|---------|-------------------|
 | Phase 1 | Immediate | Deploy attendance monitoring alerts; integrate logistic regression risk-scorer | Early identification of at-risk students before exam period |
@@ -91,7 +105,7 @@ The following phased roadmap translates the recommendations into operational ste
 
 ---
 
-## 7.3 Limitations and Future Work
+## 7.3 Limitations & Future Work
 
 This analysis should be interpreted within the following constraints:
 

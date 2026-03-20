@@ -16,7 +16,7 @@
 
 ## 2.2 Behavioural Patterns & Academic Discrepancies
 
-### 2.2.1 Study Investment versus Performance Return
+### 2.2.1 Study Investment Versus Performance Return
 
 The mean, median, and mode of weekly study hours converge at approximately 20 hours (skewness = 0.01), forming a near-perfect normal distribution with an IQR of 8 hours (Q1 = 16, Q3 = 24). This uniformity indicates that the vast majority of students invest a comparable amount of time in studying.
 
@@ -46,7 +46,7 @@ Previous academic scores exhibit the widest IQR of any numerical variable: 25 po
 
 Comparing past and present performance reveals a notable compression: the previous-score IQR of 25 points collapses to just 4 points in the current exam. This convergence implies either increasing assessment difficulty that compresses the score range, or a genuine regression-to-the-mean effect where historically divergent students produce similar current outcomes.
 
-### 2.2.6 Physical Activity: Symmetric and Narrow
+### 2.2.6 Physical Activity: Symmetric & Narrow
 
 Physical activity averages 2.97 sessions per week (mode = 3, skewness = -0.03), with an IQR of 2 sessions (Q1 = 2, Q3 = 4). The distribution is nearly perfectly symmetric across a discrete 0--6 range. Like sleep duration, this variable shows too little variation across the cohort to serve as a meaningful differentiator of academic performance.
 

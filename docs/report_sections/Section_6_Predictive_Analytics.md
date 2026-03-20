@@ -16,9 +16,11 @@ The model classifies each student as "Above Average" or "Below Average" relative
 
 ## 6.2 Suitable Predictive Techniques
 
-### Regression (for Prediction 1)
+### Regression for Score Forecasting
 
 Since the target variable (Exam Score) is continuous, **regression** is the appropriate technique. Three regression approaches were evaluated:
+
+**Table 6: Regression Model Candidates**
 
 | Model | Why It Was Considered |
 |-------|----------------------|
@@ -28,9 +30,11 @@ Since the target variable (Exam Score) is continuous, **regression** is the appr
 
 **Result:** Ridge Regression achieved the best performance (R² = 0.656, RMSE = 2.44), meaning the model explains 65.6% of the variance in exam scores with an average prediction error of approximately 2.4 points. The fact that the simplest linear model outperformed the more complex alternatives confirms the finding from Section 4.6: the dominant predictors (Attendance, Hours Studied) have straightforward linear relationships with exam scores.
 
-### Classification (for Prediction 2)
+### Classification for At-Risk Identification
 
 Since the target is a binary category (Above/Below Average), **classification** is the appropriate technique. Three classifiers were evaluated:
+
+**Table 7: Classification Model Candidates**
 
 | Model | Why It Was Considered |
 |-------|----------------------|

@@ -1,6 +1,6 @@
 # 3.0 Foundational Visual Analytics: Core Distributions
 
-All visualisations employ a unified colour system: steel-blue (#9BC2E6) for histograms, semantic traffic-light colours for ordinal variables (green = High, blue = Medium, red = Low), and consistent layout standards (font 14 pt, plotly_white template, lightgray gridlines). Chart types follow the course best-practice framework.
+All visualisations employ a unified colour system: steel-blue for histograms and semantic traffic-light colours for ordinal variables (green = High, blue = Medium, red = Low), ensuring visual consistency across the report.
 
 ---
 
@@ -8,29 +8,17 @@ All visualisations employ a unified colour system: steel-blue (#9BC2E6) for hist
 
 [Insert Figure: Histogram_Exam_Score.png]
 
-**Figure 1:** Distribution of Exam Scores (n = 6,607; 45 bins, width = 1 point, range 55--100).
+**Figure 1:** Distribution of Exam Scores (n = 6,607).
 
 The target variable is sharply right-skewed (skewness = 1.64) with the bulk of scores compressed between 63 and 72. The IQR is only 4 points (Q1 = 65, Q3 = 69), meaning half of all students fall within an extremely narrow band, while a thin right tail extends to 100. This compression suggests the current assessment may lack discriminatory power; introducing tiered question difficulty could improve differentiation.
 
 ## 3.2 Input Variable Distributions
 
-The remaining six numerical inputs are presented as a composite panel below. All use identical styling (#9BC2E6, black axis lines, equal-width bins).
+The remaining six numerical inputs are presented below.
 
-[Insert Composite Figure: Histogram_Attendance.png, Histogram_Previous_Scores.png, Histogram_Hours_Studied.png, Histogram_Sleep_Hours.png, Histogram_Tutoring_Sessions.png, Histogram_Physical_Activity.png -- arranged as a 3x2 grid]
+[Insert Figure: Figure02_Histograms_Input_Variables.png]
 
-**Figure 2:** Distributions of six numerical input variables.
-
-**Table 2: Descriptive Statistics of All Numerical Variables**
-
-| Variable | Mean | Median | Mode | Std Dev | Min | Q1 | Q3 | Max | IQR | Skewness |
-|----------|-----:|-------:|-----:|--------:|----:|---:|---:|----:|----:|---------:|
-| Hours_Studied | 19.98 | 20.00 | 20 | 5.99 | 1 | 16 | 24 | 44 | 8 | 0.01 |
-| Attendance | 79.98 | 80.00 | 67 | 11.55 | 60 | 70 | 90 | 100 | 20 | 0.01 |
-| Sleep_Hours | 7.03 | 7.00 | 7 | 1.47 | 4 | 6 | 8 | 10 | 2 | -0.02 |
-| Previous_Scores | 75.07 | 75.00 | 66 | 14.40 | 50 | 63 | 88 | 100 | 25 | 0.00 |
-| Tutoring_Sessions | 1.49 | 1.00 | 1 | 1.23 | 0 | 1 | 2 | 8 | 1 | 0.82 |
-| Physical_Activity | 2.97 | 3.00 | 3 | 1.03 | 0 | 2 | 4 | 6 | 2 | -0.03 |
-| Exam_Score | 67.24 | 67.00 | 68 | 3.89 | 55 | 65 | 69 | 100 | 4 | 1.64 |
+**Figure 2:** Distributions of six numerical input variables (descriptive statistics see Table 2 in Section 2.1).
 
 Key observations from the input distributions:
 
@@ -42,11 +30,9 @@ Key observations from the input distributions:
 
 ---
 
-## 3.3 Categorical Drivers of Exam Score (Violin & Box Plots)
+## 3.3 Categorical Drivers of Exam Score
 
-Combined violin-box plots compare every categorical variable against Exam Score. Violin plots are preferred over mean-bar charts because they reveal the full distribution shape, median, quartiles, and outliers simultaneously. All 12 categorical variables are examined; the three most insightful are presented individually, while the remaining nine are shown as composite panels.
-
-### Key Individual Charts
+Combined violin-box plots compare every categorical variable against Exam Score. Violin plots are preferred over mean-bar charts because they reveal the full distribution shape, median, quartiles, and outliers simultaneously.
 
 [Insert Figure: BoxViolin_Access_to_Resources.png]
 
@@ -62,6 +48,8 @@ Combined violin-box plots compare every categorical variable against Exam Score.
 
 These three variables produce the largest High-Low mean gaps among all categorical features:
 
+**Table 3: Top Three Categorical Variables by High-Low Mean Gap**
+
 | Variable | High Mean | Low Mean | Gap |
 |----------|----------:|---------:|----:|
 | Access to Resources | 68.09 | 66.20 | **1.89** |
@@ -70,21 +58,19 @@ These three variables produce the largest High-Low mean gaps among all categoric
 
 For Access to Resources, the "Low" group has a compressed Q3 of only 68, indicating a hard ceiling on performance when resources are scarce. For Parental Involvement, the "High" group's Q1 (66) equals the "Low" group's median -- meaning even the lower-performing students with engaged parents outperform the typical student whose parents are uninvolved. These effects, though individually modest, are likely to compound when multiple disadvantages co-occur (explored in the cross-tab heatmap, Section 4.5).
 
-### Composite Panel: Remaining Violin Plots
-
-[Insert Composite Figure: BoxViolin_Motivation_Level.png, BoxViolin_Teacher_Quality.png, BoxViolin_Parental_Education_Level.png -- arranged as a 1x3 row]
+[Insert Figure: Figure06_Violins_Motivation_Teacher_Education.png]
 
 **Figure 6:** Exam Score distributions by Motivation Level, Teacher Quality, and Parental Education Level.
 
-[Insert Composite Figure: BoxViolin_Peer_Influence.png, BoxViolin_Distance_from_Home.png, BoxViolin_Internet_Access.png -- arranged as a 1x3 row]
+[Insert Figure: Figure07_Violins_Peer_Distance_Internet.png]
 
 **Figure 7:** Exam Score distributions by Peer Influence, Distance from Home, and Internet Access.
 
-[Insert Composite Figure: BoxViolin_Learning_Disabilities.png, BoxViolin_School_Type.png, BoxViolin_Extracurricular_Activities.png -- arranged as a 1x3 row]
+[Insert Figure: Figure08_Violins_Disabilities_School_Extracurricular.png]
 
 **Figure 8:** Exam Score distributions by Learning Disabilities, School Type, and Extracurricular Activities.
 
-**Table 3: Full Summary -- All Categorical Variables vs. Exam Score**
+**Table 4: Full Summary -- All Categorical Variables vs. Exam Score**
 
 | Variable | Level | Median | Mean | Q1 | Q3 |
 |----------|-------|-------:|-----:|---:|---:|
@@ -98,7 +84,7 @@ For Access to Resources, the "Low" group has a compressed Q3 of only 68, indicat
 | School Type | Private / Public | 67 / 67 | 67.29 / 67.21 | 65 / 65 | 70 / 69 |
 | Extracurricular | Yes / No | 67 / 67 | 67.44 / 66.93 | 65 / 64 | 70 / 69 |
 
-Notable findings from the composite panels:
+Notable findings:
 
 - **Parental Education Level** exhibits a clear intergenerational gradient: Postgraduate-parent students score 1.08 points higher than High-School-parent students, with a Q1 of 66 that exceeds the latter group's median.
 - **Learning Disabilities** produce the largest binary gap (1.08 points) and a compressed Q3 (68 vs. 70), confirming a performance ceiling for this 10.5% subgroup.
@@ -106,9 +92,9 @@ Notable findings from the composite panels:
 
 ---
 
-## 3.4 Student Demographics (Donut Charts)
+## 3.4 Student Demographics
 
-[Insert Composite Figure: Pie_Family_Income.png, Pie_School_Type.png, Pie_Learning_Disabilities.png, Pie_Parental_Education_Level.png -- arranged as a 2x2 grid]
+[Insert Figure: Figure09_Pies_Demographics.png]
 
 **Figure 9:** Demographic composition of the student cohort by Family Income, School Type, Learning Disability status, and Parental Education Level.
 
@@ -116,7 +102,7 @@ The cohort is socioeconomically diverse: Low and Medium income households each r
 
 ---
 
-## 3.5 Behavioural Trends (Line Charts)
+## 3.5 Behavioural Trends
 
 Three line charts display the mean Exam Score across ordered levels of key behavioural variables. Each marker carries a measure-driven data label (course best practice); the y-axis does not start at zero (appropriate for line charts per course standards).
 
@@ -140,9 +126,9 @@ Scores rise to a peak near 6 sessions per week, after which performance plateaus
 
 ---
 
-## 3.6 Student Distribution by Equity Variables (Column Charts)
+## 3.6 Student Distribution by Equity Variables
 
-[Insert Composite Figure: Bar_Access_to_Resources.png, Bar_Parental_Involvement.png -- arranged side by side]
+[Insert Figure: Figure13_Bars_Resources_Parental.png]
 
 **Figure 13:** Student count distribution by Access to Resources and Parental Involvement.
 

@@ -1,6 +1,6 @@
 # 5.0 Interactive Data Dashboard
 
-## 5.1 Target Audience and Justification
+## 5.1 Target Audience & Justification
 
 The dashboard is designed for the **academic affairs office** — specifically, university administrators and education policymakers responsible for student retention, intervention design, and resource allocation.
 
@@ -14,7 +14,7 @@ This audience is appropriate for three reasons:
 
 ---
 
-## 5.2 Dashboard Structure and Functionality
+## 5.2 Dashboard Structure & Functionality
 
 The dashboard is organised as a single scrollable page with three key components:
 
@@ -24,47 +24,31 @@ The dashboard is organised as a single scrollable page with three key components
 
 **Five Analytical Modules.** The charts are grouped into five sequential sections that mirror the analytical narrative of this report — progressing from overall performance patterns, through behavioural analysis, to systemic equity diagnostics.
 
+[Insert Figure: Dashboard_Screenshot.png]
+
+**Figure 14:** Full-page screenshot of the Interactive Data Dashboard.
+
 ---
 
-## 5.3 Charts Included and Justification
+## 5.3 Charts Included & Justification
 
-### Module 01 — Performance Baseline
+**Table 5: Dashboard Charts and Justification**
 
-| Chart | Type | Justification for Inclusion |
-|-------|------|-----------------------------|
-| Distribution of Exam Scores | Histogram | Establishes the target variable's shape — the narrow IQR of 4 points reveals a "compression problem" that frames the entire analysis |
-| Attendance vs. Exam Score by Motivation | Scatter plot with trendlines | Visualises the strongest predictor relationship (r = 0.581) and shows it holds across all motivation levels — the single most important chart for understanding performance drivers |
-
-### Module 02 — Behavioural Levers
-
-| Chart | Type | Justification for Inclusion |
-|-------|------|-----------------------------|
-| Study Hours vs. Exam Score by Family Income | Scatter plot with trendlines | Tests whether effort pays off equally across income groups — the parallel trendlines confirm income-neutral returns, a key equity finding |
-| Trend by Weekly Study Hours | Line chart | Quantifies the optimal study duration and reveals diminishing returns beyond 24 hours/week — directly informs study programme design |
-| Trend by Tutoring Sessions | Line chart | Reveals the inverted-U pattern (optimal at 3--6 sessions) — essential for setting tutoring dosage recommendations |
-
-### Module 03 — Support Environment
-
-| Chart | Type | Justification for Inclusion |
-|-------|------|-----------------------------|
-| Exam Scores by Motivation Level | Violin + box plot | Shows that motivation widens the performance spread rather than shifting the median — a counterintuitive finding |
-| Exam Scores by Parental Involvement | Violin + box plot | Demonstrates that engaged parents lift even lower-performing students above the uninvolved group's median |
-| Exam Scores by Teacher Quality | Violin + box plot | Confirms a consistent quality gradient — supports investment in teacher development |
-
-### Module 04 — Socioeconomic Impact
-
-| Chart | Type | Justification for Inclusion |
-|-------|------|-----------------------------|
-| Exam Scores by Family Income | Violin + box plot | Quantifies the income-driven performance gap |
-| Exam Scores by Access to Resources | Violin + box plot | Identifies resource access as the largest categorical driver (gap = 1.89 points) — the strongest equity signal in the dataset |
-| Exam Scores by Parental Education Level | Violin + box plot | Shows the intergenerational education gradient — informs long-term policy |
-
-### Module 05 — Systemic Analysis
-
-| Chart | Type | Justification for Inclusion |
-|-------|------|-----------------------------|
-| Pairwise Correlation Heatmap | Heatmap | Provides a global ranking of all numerical predictors in a single view — the summary chart that ties together all preceding analyses |
-| Motivation x Parental Involvement Cross-Tab | Heatmap | Reveals the report's most actionable finding: parental involvement compensates for low motivation (score 67.7 vs. 66.8) |
+| Module | Chart | Type | Justification for Inclusion |
+|--------|-------|------|-----------------------------|
+| 01 Performance Baseline | Distribution of Exam Scores | Histogram | Establishes the target variable's shape — the narrow IQR of 4 points reveals a "compression problem" that frames the entire analysis |
+| 01 Performance Baseline | Attendance vs. Exam Score by Motivation | Scatter plot with trendlines | Visualises the strongest predictor relationship (r = 0.581) and shows it holds across all motivation levels — the single most important chart for understanding performance drivers |
+| 02 Behavioural Levers | Study Hours vs. Exam Score by Family Income | Scatter plot with trendlines | Tests whether effort pays off equally across income groups — the parallel trendlines confirm income-neutral returns, a key equity finding |
+| 02 Behavioural Levers | Trend by Weekly Study Hours | Line chart | Quantifies the optimal study duration and reveals diminishing returns beyond 24 hours/week — directly informs study programme design |
+| 02 Behavioural Levers | Trend by Tutoring Sessions | Line chart | Reveals the inverted-U pattern (optimal at 3--6 sessions) — essential for setting tutoring dosage recommendations |
+| 03 Support Environment | Exam Scores by Motivation Level | Violin + box plot | Shows that motivation widens the performance spread rather than shifting the median — a counterintuitive finding |
+| 03 Support Environment | Exam Scores by Parental Involvement | Violin + box plot | Demonstrates that engaged parents lift even lower-performing students above the uninvolved group's median |
+| 03 Support Environment | Exam Scores by Teacher Quality | Violin + box plot | Confirms a consistent quality gradient — supports investment in teacher development |
+| 04 Socioeconomic Impact | Exam Scores by Family Income | Violin + box plot | Quantifies the income-driven performance gap |
+| 04 Socioeconomic Impact | Exam Scores by Access to Resources | Violin + box plot | Identifies resource access as the largest categorical driver (gap = 1.89 points) — the strongest equity signal in the dataset |
+| 04 Socioeconomic Impact | Exam Scores by Parental Education Level | Violin + box plot | Shows the intergenerational education gradient — informs long-term policy |
+| 05 Systemic Analysis | Pairwise Correlation Heatmap | Heatmap | Provides a global ranking of all numerical predictors in a single view — the summary chart that ties together all preceding analyses |
+| 05 Systemic Analysis | Motivation x Parental Involvement Cross-Tab | Heatmap | Reveals the report's most actionable finding: parental involvement compensates for low motivation (score 67.7 vs. 66.8) |
 
 ---
 
@@ -72,24 +56,18 @@ The dashboard is organised as a single scrollable page with three key components
 
 The dashboard supports three primary modes of insight discovery:
 
-### Mode 1: Cohort Overview (No Filters Applied)
-
-When the dashboard loads without filters, the administrator sees the full cohort picture:
+**Cohort Overview (No Filters Applied).** When the dashboard loads without filters, the administrator sees the full cohort picture:
 - The **KPI strip** immediately communicates the baseline: 6,607 students, mean score 67.2, average attendance 80%.
 - The **exam score histogram** reveals that most students cluster in a narrow 65--69 band, raising the question: what separates the few high-achievers from the majority?
 - The **attendance scatter plot** answers this question directly — attendance is the dominant lever, and this relationship is consistent across all motivation levels.
 
-### Mode 2: Subgroup Investigation (Filters Applied)
-
-The real power of the dashboard emerges when filters are applied to test specific hypotheses:
+**Subgroup Investigation (Filters Applied).** The real power of the dashboard emerges when filters are applied to test specific hypotheses:
 
 - **"Are low-income students differently affected by attendance?"** — Selecting Family Income = "Low" updates the attendance scatter plot. The administrator can observe whether the trendline slope changes, and the KPI strip shows how the mean score and attendance shift for this subgroup.
 - **"Do low-motivation students benefit from tutoring?"** — Selecting Motivation Level = "Low" updates the tutoring line chart, revealing whether the inverted-U pattern persists or changes for unmotivated students.
 - **"What does the private school advantage look like?"** — Selecting Institution Type = "Private" updates all charts simultaneously, allowing the administrator to compare private-school patterns against the default full-cohort view.
 
-### Mode 3: Cross-Module Synthesis
-
-By scrolling through all five modules in sequence, the administrator builds a layered understanding:
+**Cross-Module Synthesis.** By scrolling through all five modules in sequence, the administrator builds a layered understanding:
 
 1. **Module 01** establishes *what* the problem is (compressed scores, attendance as the key driver).
 2. **Module 02** reveals *how* effort translates to outcomes (study hours and tutoring dosage).

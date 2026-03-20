@@ -46,7 +46,7 @@ The colour stratification by Peer Influence reveals a consistent but subtle patt
 
 ---
 
-## 4.4 Compound Socioeconomic Disadvantage (Stacked Bar Chart)
+## 4.4 Compound Socioeconomic Disadvantage
 
 [Insert Figure: StackedBar_Income_Resources.png]
 
@@ -58,21 +58,13 @@ This means that students from low-income backgrounds face a **double disadvantag
 
 ---
 
-## 4.5 Compound Effect: Motivation x Parental Involvement (Cross-Tab Heatmap)
+## 4.5 Compound Effect: Motivation x Parental Involvement
 
 [Insert Figure: Heatmap_MeanScore_Motivation_Parental.png]
 
 **Figure 18:** Average Exam Score by Motivation Level and Parental Involvement (3x3 cross-tabulation).
 
-This heatmap reveals the most actionable multi-dimensional finding in the dataset. Rather than examining each factor in isolation, the cross-tabulation shows their **joint effect** on mean exam scores:
-
-| | Low Parental | Medium Parental | High Parental |
-|---|---:|---:|---:|
-| **Low Motivation** | 65.9 | 66.5 | 67.7 |
-| **Medium Motivation** | 66.4 | 67.2 | 68.2 |
-| **High Motivation** | 66.8 | 67.7 | 68.4 |
-
-Two critical insights emerge:
+This heatmap reveals the most actionable multi-dimensional finding in the dataset. Rather than examining each factor in isolation, the cross-tabulation shows their **joint effect** on mean exam scores. Two critical insights emerge:
 
 1. **Parental involvement matters more than motivation.** A student with low motivation but high parental involvement (67.7) outperforms a student with high motivation but low parental involvement (66.8). This is a counterintuitive finding with direct policy implications: investing in parental engagement programmes may yield greater academic returns than programmes targeting student motivation alone.
 
@@ -80,7 +72,7 @@ Two critical insights emerge:
 
 ---
 
-## 4.6 Global Feature Associations (Correlation Heatmap)
+## 4.6 Global Feature Associations
 
 [Insert Figure: Heatmap_Correlation.png]
 
@@ -109,7 +101,7 @@ The heatmap confirms the hierarchy established by the scatter and line chart ana
 
 Two additional charts provide supplementary perspectives on the relationships explored above.
 
-[Insert Composite Figure: DensityContour_Previous_Exam.png, Bubble_Attendance_Score_Hrs.png -- arranged side by side]
+[Insert Figure: Figure20_DensityContour_Bubble.png]
 
 **Figure 20:** (Left) Density contour: joint distribution of Previous Scores and Exam Score. (Right) Bubble chart: Attendance vs. Exam Score, faceted by Motivation Level (bubble size = study hours).
 
@@ -117,7 +109,7 @@ Two additional charts provide supplementary perspectives on the relationships ex
 
 - **Bubble Chart**: By encoding four variables simultaneously (attendance on X, exam score on Y, study hours as bubble size, motivation as facet), this chart reveals the synergy between engagement and effort. In all three facets, the largest bubbles (highest study hours) cluster in the upper-right quadrant (high attendance, high scores), confirming that the combination of attendance and study duration produces outcomes greater than either factor alone.
 
-[Insert Composite Figure: ClusteredBar_SchoolType_Internet.png -- single chart]
+[Insert Figure: ClusteredBar_SchoolType_Internet.png]
 
 **Figure 21:** Student count by School Type and Internet Access.
 
