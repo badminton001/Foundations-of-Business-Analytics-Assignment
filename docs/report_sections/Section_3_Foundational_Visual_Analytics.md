@@ -18,12 +18,12 @@ The remaining six numerical inputs are presented below.
 
 [Insert Figure: Figure02_Histograms_Input_Variables.png]
 
-**Figure 2:** Distributions of six numerical input variables (descriptive statistics see Table 2 in Section 2.1).
+**Figure 2:** Distributions of six numerical input variables (descriptive statistics see Table 2).
 
 Key observations from the input distributions:
 
-- **Attendance** has the widest IQR (20 points) and a 13-point gap between mean (80%) and mode (67%), revealing a hidden low-attendance subgroup masked by the cohort average. Approximately one quarter of students attend fewer than 70% of classes.
-- **Previous Scores** span the full 50--100 range with an IQR of 25 points -- the widest of any variable -- yet this heterogeneity collapses to just 4 points in the current exam, suggesting historical performance is a weak predictor of present outcomes.
+- **Attendance** has an IQR of 20 points and a 13-point gap between mean (80%) and mode (67%), revealing a hidden low-attendance subgroup masked by the cohort average. Approximately one quarter of students attend fewer than 70% of classes.
+- **Previous Scores** span the full 50--100 range with an IQR of 25 points (the widest of any variable), yet this heterogeneity collapses to just 4 points in the current exam, suggesting historical performance is a weak predictor of present outcomes.
 - **Hours Studied** is near-perfectly symmetric (skewness = 0.01, IQR = 8 hours). This uniformity, juxtaposed with the right-skewed exam distribution, is the central paradox of the dataset: similar time investment produces divergent outcomes.
 - **Tutoring Sessions** is right-skewed (0.82) with a long tail to 8 sessions, confirming that most students engage minimally while a small subset pursues intensive supplementary instruction.
 - **Sleep Hours** and **Physical Activity** are tightly symmetric with narrow IQRs (2 each) and show too little cross-student variation to serve as performance differentiators.
@@ -56,21 +56,27 @@ These three variables produce the largest High-Low mean gaps among all categoric
 | Parental Involvement | 68.09 | 66.36 | **1.73** |
 | Family Income | 67.84 | 66.85 | **0.99** |
 
-For Access to Resources, the "Low" group has a compressed Q3 of only 68, indicating a hard ceiling on performance when resources are scarce. For Parental Involvement, the "High" group's Q1 (66) equals the "Low" group's median -- meaning even the lower-performing students with engaged parents outperform the typical student whose parents are uninvolved. These effects, though individually modest, are likely to compound when multiple disadvantages co-occur (explored in the cross-tab heatmap, Section 4.5).
+For Access to Resources, the "Low" group has a compressed Q3 of only 68, indicating a hard ceiling on performance when resources are scarce. For Parental Involvement, the "High" group's Q1 (66) equals the "Low" group's median, meaning even the lower-performing students with engaged parents outperform the typical student whose parents are uninvolved. These effects, though individually modest, are likely to compound when multiple disadvantages co-occur (explored in Sections 4.4 and 4.5).
 
 [Insert Figure: Figure06_Violins_Motivation_Teacher_Education.png]
 
 **Figure 6:** Exam Score distributions by Motivation Level, Teacher Quality, and Parental Education Level.
 
+All three variables show a consistent High-to-Low gradient. Motivation Level and Teacher Quality share similar mean gaps (0.95 and 0.93 points respectively), while Parental Education Level produces a wider spread (1.08 points), with Postgraduate-parent students showing a visibly higher Q1.
+
 [Insert Figure: Figure07_Violins_Peer_Distance_Internet.png]
 
 **Figure 7:** Exam Score distributions by Peer Influence, Distance from Home, and Internet Access.
+
+Peer Influence displays a clear positive-to-negative gradient (mean gap = 1.06 points). Distance from Home follows a similar pattern, with "Far" students scoring lowest. Internet Access shows a visible Yes/No split (mean gap = 0.76 points), though the violin shapes remain similar.
 
 [Insert Figure: Figure08_Violins_Disabilities_School_Extracurricular.png]
 
 **Figure 8:** Exam Score distributions by Learning Disabilities, School Type, and Extracurricular Activities.
 
-**Table 4: Full Summary -- All Categorical Variables vs. Exam Score**
+Learning Disabilities produce the most visible effect in this group: the "Yes" violin has a compressed Q3 (68 vs. 70), indicating a performance ceiling. School Type shows virtually no difference between Public and Private (mean gap = 0.08 points). Extracurricular Activities show a modest positive effect (0.51 points).
+
+**Table 4: Full Summary of All Categorical Variables vs. Exam Score**
 
 | Variable | Level | Median | Mean | Q1 | Q3 |
 |----------|-------|-------:|-----:|---:|---:|
@@ -88,7 +94,7 @@ Notable findings:
 
 - **Parental Education Level** exhibits a clear intergenerational gradient: Postgraduate-parent students score 1.08 points higher than High-School-parent students, with a Q1 of 66 that exceeds the latter group's median.
 - **Learning Disabilities** produce the largest binary gap (1.08 points) and a compressed Q3 (68 vs. 70), confirming a performance ceiling for this 10.5% subgroup.
-- **School Type** is the least influential variable (mean difference = 0.08 points) -- a counterintuitive finding suggesting that public vs. private schooling alone does not drive performance differences in this cohort.
+- **School Type** is the least influential variable (mean difference = 0.08 points), a counterintuitive finding suggesting that public vs. private schooling alone does not drive performance differences in this cohort.
 
 ---
 
@@ -110,13 +116,13 @@ Three line charts display the mean Exam Score across ordered levels of key behav
 
 **Figure 10:** Trend of average Exam Score by class attendance rate.
 
-Attendance produces the strongest and most consistent positive trend: scores rise from 63.7 (60--65% attendance) to 70.5 (95--100%), a **6.8-point lift** with an approximately linear gradient across the entire range. Unlike other behavioural variables, there is no visible saturation point, confirming attendance as the single most effective lever for academic improvement.
+Attendance produces the strongest and most consistent positive trend: scores rise from 63.7 (60--65% attendance) to 70.6 (95--100%), a **6.9-point lift** with an approximately linear gradient across the entire range. Unlike other behavioural variables, there is no visible saturation point, confirming attendance as the single most effective lever for academic improvement.
 
 [Insert Figure: Line_Hours_Studied.png]
 
 **Figure 11:** Trend of average Exam Score by weekly study hours.
 
-Scores increase monotonically from 63.7 (0--8 hours) to 71.3 (33--44 hours), a **7.6-point lift**. However, the gradient flattens beyond 24 hours, suggesting diminishing marginal returns. Institutional guidance should emphasise study quality over raw time accumulation.
+Scores increase monotonically from 63.7 (0--8 hours) to 71.2 (33--44 hours), a **7.5-point lift**. However, the gradient flattens beyond 24 hours, suggesting diminishing marginal returns. Institutional guidance should emphasise study quality over raw time accumulation.
 
 [Insert Figure: Line_Tutoring_Sessions.png]
 

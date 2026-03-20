@@ -20,13 +20,13 @@
 
 The mean, median, and mode of weekly study hours converge at approximately 20 hours (skewness = 0.01), forming a near-perfect normal distribution with an IQR of 8 hours (Q1 = 16, Q3 = 24). This uniformity indicates that the vast majority of students invest a comparable amount of time in studying.
 
-However, this consistent effort does not translate into proportionally strong outcomes. The mean exam score is only 67.24, and the IQR is remarkably narrow at just 4 points (Q1 = 65, Q3 = 69), meaning that the middle 50% of students are compressed into a 4-point band despite wide variation in study hours (range: 1--44 hours). Furthermore, the sharp contrast between the symmetric study-hours distribution (skewness = 0.01) and the right-skewed exam score distribution (skewness = 1.64) suggests that the source of performance divergence lies not in the quantity of study time but in its quality -- factors such as learning efficiency, cognitive strategy, and access to external support.
+However, this consistent effort does not translate into proportionally strong outcomes. The mean exam score is only 67.24, and the IQR is remarkably narrow at just 4 points (Q1 = 65, Q3 = 69), meaning that the middle 50% of students are compressed into a 4-point band despite wide variation in study hours (range: 1--44 hours). The sharp contrast between the symmetric study-hours distribution (skewness = 0.01) and the right-skewed exam score distribution (skewness = 1.64) reinforces this point. The source of performance divergence lies not in the quantity of study time but in its quality, including learning efficiency, cognitive strategy, and access to external support.
 
 ### 2.2.2 Attendance: A Deceptive Mean
 
-The mean attendance is 79.98%, yet the mode is only 67% -- a 13-percentage-point gap. The standard deviation of 11.55 is nearly double that of study hours (5.99), and the IQR spans 20 points (Q1 = 70, Q3 = 90). This pattern reveals a dual-peaked cohort: a substantial "low-attendance subgroup" concentrated near 67% pulls the mode downward, while consistently engaged students elevate the mean.
+The mean attendance is 79.98%, yet the mode is only 67%, a 13-percentage-point gap. The standard deviation of 11.55 is nearly double that of study hours (5.99), and the IQR spans 20 points (Q1 = 70, Q3 = 90). This pattern reveals a stratified cohort: a substantial "low-attendance subgroup" concentrated near 67% pulls the mode downward, while consistently engaged students elevate the mean.
 
-Relying solely on the average attendance rate of 80% would obscure this underlying stratification. The modal group -- attending roughly two-thirds of classes -- is likely to overlap with the lowest-performing students if attendance is positively correlated with exam scores (a relationship confirmed in Section 4.1).
+Relying solely on the average attendance rate of 80% would obscure this underlying stratification. The modal group, attending roughly two-thirds of classes, is likely to overlap with the lowest-performing students if attendance is positively correlated with exam scores (a relationship confirmed in Section 4.1).
 
 ### 2.2.3 Sleep Duration: Uniform but Not Predictive
 
@@ -38,7 +38,7 @@ Given this uniformity and the highly skewed exam score distribution, sleep durat
 
 The mean tutoring frequency is 1.49 sessions per week, but both the median and mode equal 1.00, with a right skewness of 0.82. This confirms that the majority of students attend at most one session, while a small subset attends up to 8 sessions per week, pulling the mean above the mode in a classic long-tail pattern.
 
-If tutoring were uniformly effective, one would expect the exam score distribution to shift leftward (lower skewness) or become more concentrated. The persistence of high score skewness (1.64) alongside moderate tutoring skewness (0.82) suggests that additional tutoring sessions yield diminishing returns, or that their effectiveness is conditional on other factors such as motivation or prior preparation.
+If tutoring were uniformly effective, one would expect the exam score distribution to become more symmetric (lower skewness) or more concentrated. The persistence of high score skewness (1.64) alongside moderate tutoring skewness (0.82) suggests that additional tutoring sessions yield diminishing returns, or that their effectiveness is conditional on other factors such as motivation or prior preparation.
 
 ### 2.2.5 Previous Scores: The Widest Spread
 

@@ -10,28 +10,28 @@ The convergence of descriptive statistics (Section 2), visual analytics (Section
 
 **Recommendation 1: Attendance Monitoring and Early-Warning System**
 
-**Table 8: Evidence for Recommendation 1**
+**Table 9: Evidence for Recommendation 1**
 
 | Evidence Source | Finding |
 |----------------|---------|
 | Correlation analysis (Section 4.6) | Attendance has the strongest correlation with Exam Score (r = 0.581) |
-| Line chart trend (Section 3.5) | 6.8-point score lift from lowest to highest attendance band, with no saturation |
-| Predictive modelling (Section 6.4) | Attendance is the #1 feature in both regression and classification models |
+| Line chart trend (Section 3.5) | 6.9-point score lift from lowest to highest attendance band, with no saturation |
+| Predictive modelling (Section 6.3) | Attendance is the #1 feature in both regression and classification models |
 | Descriptive statistics (Section 2.2.2) | Modal attendance (67%) is 13 points below the mean (80%), revealing a hidden at-risk subgroup |
 
 *Action:* Deploy a real-time attendance tracking system with automated alerts when a student's cumulative attendance drops below 75%. The logistic regression classifier (AUC = 0.995) can be integrated as a backend risk-scoring engine, combining attendance with other behavioural signals to generate a composite risk probability for each student.
 
 **Recommendation 2: Study Quality Enhancement Programme**
 
-**Table 9: Evidence for Recommendation 2**
+**Table 10: Evidence for Recommendation 2**
 
 | Evidence Source | Finding |
 |----------------|---------|
 | Descriptive statistics (Section 2.2.1) | Study hours are highly uniform (IQR = 8) yet exam scores diverge sharply (skewness = 1.64) |
-| Line chart trend (Section 3.5) | Diminishing returns beyond 24 hours/week — additional time yields minimal score improvement |
+| Line chart trend (Section 3.5) | Diminishing returns beyond 24 hours/week; additional time yields minimal score improvement |
 | Scatter analysis (Section 4.2) | Study-time effectiveness is income-neutral (parallel trendlines across income groups) |
 
-*Action:* Rather than encouraging students to study longer, introduce structured study-skill workshops focusing on evidence-based techniques (active recall, spaced repetition, self-testing). The data confirms that *how* students study matters more than *how long* — and that these programmes will benefit students across all income levels equally.
+*Action:* Rather than encouraging students to study longer, introduce structured study-skill workshops focusing on evidence-based techniques (active recall, spaced repetition, self-testing). The data confirms that *how* students study matters more than *how long*, and that these programmes will benefit students across all income levels equally.
 
 ---
 
@@ -39,27 +39,27 @@ The convergence of descriptive statistics (Section 2), visual analytics (Section
 
 **Recommendation 3: Parental Engagement Initiative**
 
-**Table 10: Evidence for Recommendation 3**
+**Table 11: Evidence for Recommendation 3**
 
 | Evidence Source | Finding |
 |----------------|---------|
 | Violin plot (Section 3.3) | Parental Involvement produces the second-largest High-Low mean gap (1.73 points) |
 | Cross-tab heatmap (Section 4.5) | A low-motivation student with high parental involvement (67.7) outperforms a high-motivation student with low parental involvement (66.8) |
-| Compound effect (Section 4.5) | The Motivation x Parental Involvement interaction is additive — improving either factor independently raises scores |
+| Compound effect (Section 4.5) | The Motivation x Parental Involvement interaction is additive; improving either factor independently raises scores |
 
-*Action:* Launch a structured parental engagement programme (workshops, progress report access, communication channels with teachers). The cross-tab analysis demonstrates that parental involvement can partially compensate for low student motivation — making it a more reliable lever than motivation-targeting programmes, which depend on the student's internal state.
+*Action:* Launch a structured parental engagement programme (workshops, progress report access, communication channels with teachers). The cross-tab analysis demonstrates that parental involvement can partially compensate for low student motivation, making it a more reliable lever than motivation-targeting programmes, which depend on the student's internal state.
 
 **Recommendation 4: Resource Access Equalisation**
 
-**Table 11: Evidence for Recommendation 4**
+**Table 12: Evidence for Recommendation 4**
 
 | Evidence Source | Finding |
 |----------------|---------|
 | Violin plot (Section 3.3) | Access to Resources produces the largest High-Low mean gap (1.89 points) of all categorical variables |
-| Stacked bar chart (Section 4.4) | Low-income students are disproportionately concentrated in the Low resource tier — a compound disadvantage |
-| Feature importance (Section 6.4) | Access to Resources ranks in the mid-tier of predictive features, contributing independently beyond income |
+| Stacked bar chart (Section 4.4) | ~20% of low-income students fall into the Low resource tier, creating a compound penalty when both disadvantages co-occur |
+| Feature importance (Section 6.3) | Access to Resources ranks 4th in regression feature importance, contributing independently beyond income |
 
-*Action:* Establish a resource equalisation fund targeting low-income students in the Low resource tier. The stacked bar analysis shows that income and resource access are structurally correlated, creating a double disadvantage that effort-based interventions cannot address. Priority investments should include: subsidised textbooks and digital materials, extended library access hours, and device lending programmes.
+*Action:* Establish a resource equalisation fund targeting students in the Low resource tier, with priority for low-income students. Although resource access and income are largely independent, both independently depress scores, and students facing both disadvantages experience a compound penalty that effort-based interventions cannot address. Priority investments should include subsidised textbooks and digital materials, extended library access hours, and device lending programmes.
 
 ---
 
@@ -67,18 +67,18 @@ The convergence of descriptive statistics (Section 2), visual analytics (Section
 
 **Recommendation 5: Tutoring Session Optimisation**
 
-**Table 12: Evidence for Recommendation 5**
+**Table 13: Evidence for Recommendation 5**
 
 | Evidence Source | Finding |
 |----------------|---------|
-| Line chart (Section 3.5) | Inverted-U pattern: scores peak at 5--6 sessions/week, then plateau or decline |
+| Line chart (Section 3.5) | Inverted-U pattern: scores peak at 6 sessions/week (71.7), then decline |
 | Descriptive statistics (Section 2.2.4) | Most students attend only 1 session (median = mode = 1), while a small subset attends up to 8 |
 
 *Action:* Recommend an optimal tutoring dosage of 3--6 sessions per week. Students attending fewer than 3 should be encouraged to increase; students attending more than 6 should be counselled to reallocate time to independent study. Excessive tutoring may create dependency that undermines self-directed learning skills.
 
 **Recommendation 6: Teacher Quality and Institutional Equity**
 
-**Table 13: Evidence for Recommendation 6**
+**Table 14: Evidence for Recommendation 6**
 
 | Evidence Source | Finding |
 |----------------|---------|
@@ -86,7 +86,7 @@ The convergence of descriptive statistics (Section 2), visual analytics (Section
 | Clustered bar chart (Section 4.7) | Internet access is virtually identical between public (92.7%) and private (91.9%) schools |
 | Violin plot (Section 3.3) | School Type is the least influential variable (mean gap = 0.08 points) |
 
-*Action:* Since the public-private school distinction has negligible impact on outcomes and internet access is equitable across school types, the institutional focus should shift from school-type debates to within-school quality improvement — specifically, teacher professional development programmes. The teacher quality gradient, while modest individually, compounds with other environmental factors.
+*Action:* Since the public-private school distinction has negligible impact on outcomes and internet access is equitable across school types, the institutional focus should shift from school-type debates to within-school quality improvement, specifically teacher professional development programmes. The teacher quality gradient, while modest individually, compounds with other environmental factors.
 
 ---
 
@@ -94,7 +94,7 @@ The convergence of descriptive statistics (Section 2), visual analytics (Section
 
 The following phased roadmap translates the recommendations into operational steps:
 
-**Table 14: Deployment Roadmap**
+**Table 15: Deployment Roadmap**
 
 | Phase | Timeline | Actions | Expected Outcome |
 |-------|----------|---------|-------------------|
@@ -113,9 +113,11 @@ This analysis should be interpreted within the following constraints:
 
 2. **Narrow score range.** The IQR of exam scores is only 4 points (65--69), which limits the practical magnitude of any predictor's effect. While the predictive models achieve strong statistical metrics, the real-world score differences between student subgroups are modest. Interventions should be evaluated against meaningful effect sizes, not just statistical significance.
 
-3. **Unmeasured confounders.** The 19 available features explain 65.6% of score variance (R² = 0.656). The remaining 34.4% is attributable to factors not captured in the dataset — cognitive ability, emotional well-being, assessment-specific preparation, and measurement error. Future data collection should consider incorporating these dimensions.
+3. **Unmeasured confounders.** The 19 available features explain 65.6% of score variance (R² = 0.656). The remaining 34.4% is attributable to factors not captured in the dataset, such as cognitive ability, emotional well-being, assessment-specific preparation, and measurement error. Future data collection should consider incorporating these dimensions.
 
-4. **Model refinement.** The current models were trained on a single cohort. As new student data becomes available in subsequent semesters, the models should be periodically retrained and validated to ensure their predictions remain accurate and reflect any changes in the student population or institutional context.
+4. **Classification accuracy context.** The logistic regression classifier achieves near-perfect accuracy (AUC = 0.995), which partly reflects the narrow exam score IQR of 4 points. When most students cluster tightly around the mean (67.24) and strong predictors like Attendance (r = 0.581) are available, the above/below-average boundary becomes relatively easy to separate. The model's performance should therefore be interpreted in the context of this specific dataset rather than as a guarantee of similar accuracy on future cohorts with wider score distributions.
+
+5. **Model refinement.** The current models were trained on a single cohort. As new student data becomes available in subsequent semesters, the models should be periodically retrained and validated to ensure their predictions remain accurate and reflect any changes in the student population or institutional context.
 
 ---
 
@@ -123,13 +125,13 @@ This analysis should be interpreted within the following constraints:
 
 This report analysed 6,607 student records across 19 features to identify the behavioural, environmental, and socioeconomic factors that drive examination performance. The key findings are:
 
-- **Attendance is the single most powerful predictor** of exam scores (r = 0.581), producing a consistent 6.8-point score lift from lowest to highest attendance bands with no saturation point. It ranks first in both regression and classification feature importance.
+- **Attendance is the single most powerful predictor** of exam scores (r = 0.581), producing a consistent 6.9-point score lift from lowest to highest attendance bands with no saturation point. It ranks first in both regression and classification feature importance.
 
 - **Study time quantity is uniform; quality is the differentiator.** Students invest comparable hours (IQR = 8), but the right-skewed score distribution (skewness = 1.64) confirms that divergent outcomes stem from *how* students study, not how long.
 
-- **Socioeconomic factors create compound disadvantages.** Low-income students face a double penalty: lower income directly depresses scores, AND it restricts access to learning resources — the categorical variable with the largest performance gap (1.89 points). These structural barriers require policy-level intervention.
+- **Socioeconomic factors create compound disadvantages.** Lower income and limited resource access both independently depress scores, with resource access producing the largest categorical performance gap (1.89 points). When both disadvantages co-occur, the penalties compound, creating structural barriers that require policy-level intervention.
 
-- **Parental involvement outweighs student motivation.** The cross-tab analysis reveals that a student with low motivation but high parental involvement outperforms a highly motivated student with low parental support — a counterintuitive finding with direct policy implications.
+- **Parental involvement outweighs student motivation.** The cross-tab analysis reveals that a student with low motivation but high parental involvement outperforms a highly motivated student with low parental support, a counterintuitive finding with direct policy implications.
 
 - **Linear models are sufficient.** Both Ridge Regression (R² = 0.656, RMSE = 2.44) and Logistic Regression (F1 = 0.980, AUC = 0.995) outperform ensemble alternatives, confirming that the underlying relationships are fundamentally linear and that interpretable models can power a practical early-warning system.
 

@@ -1,6 +1,6 @@
 # 4.0 Advanced Visual Analytics: Multi-Dimensional Interactions
 
-The foundational charts in Section 3 examined one variable at a time against the target. This section introduces multi-dimensional techniques -- scatter plots with marginal distributions, density contours, bubble charts, stacked/clustered bars, and heatmaps -- to reveal interaction effects, compound disadvantages, and systemic patterns that single-variable analyses cannot surface.
+The foundational charts in Section 3 examined one variable at a time against the target. This section introduces multi-dimensional techniques, including scatter plots with marginal distributions, density contours, bubble charts, stacked/clustered bars, and heatmaps. These charts reveal interaction effects, compound disadvantages, and systemic patterns that single-variable analyses cannot surface.
 
 Each scatter plot below consists of three integrated panels: the main scatter with per-group OLS trendlines (coloured to match group identity), a marginal histogram on the top edge showing x-variable density, and a marginal box plot on the right edge showing y-variable spread by group.
 
@@ -14,7 +14,7 @@ Each scatter plot below consists of three integrated panels: the main scatter wi
 
 Attendance is the dominant predictor of exam performance (Pearson r = 0.581). The OLS trendlines for all three motivation groups slope upward at similar gradients, confirming that the attendance-performance relationship holds regardless of motivation level.
 
-The marginal box plot on the right reveals that while median scores are similar across motivation tiers, the **high-motivation group has a longer upper tail** -- producing more outlier high-achievers. Conversely, the low-motivation group has a heavier lower tail. This suggests that motivation does not shift the average student's performance substantially, but it amplifies the variance: highly motivated students are more likely to convert attendance into exceptional outcomes.
+The marginal box plot on the right reveals that while median scores are similar across motivation tiers, the **high-motivation group has a longer upper tail**, producing more outlier high-achievers. Conversely, the low-motivation group has a heavier lower tail. This suggests that motivation does not shift the average student's performance substantially, but it amplifies the variance: highly motivated students are more likely to convert attendance into exceptional outcomes.
 
 The marginal histogram on top shows that attendance distributions overlap heavily across motivation groups, meaning that motivation does not systematically drive students to attend more or fewer classes. The academic implication is clear: attendance improvement programmes should target all students regardless of their motivation profile.
 
@@ -26,11 +26,11 @@ The marginal histogram on top shows that attendance distributions overlap heavil
 
 **Figure 15:** Exam Score vs. Weekly Study Hours, stratified by Family Income (r = 0.446).
 
-The second-strongest behavioural predictor (r = 0.446) is study duration. The trendlines for High, Medium, and Low income groups are **nearly parallel**, indicating that the academic return on study time is largely independent of family income. However, at equivalent study hours, high-income students consistently score marginally higher, suggesting that income operates through supplementary channels (better resources, tutoring access, home environment) rather than by altering the efficiency of study time itself.
+The second-strongest behavioural predictor (r = 0.446) is study duration. The trendlines for High, Medium, and Low income groups are **nearly parallel**, indicating that the academic return on study time is largely independent of family income. However, at equivalent study hours, high-income students consistently score marginally higher. This suggests that income operates through supplementary channels (better resources, tutoring access, home environment) rather than by altering study efficiency itself.
 
 The marginal box plot confirms that the income-driven performance gap exists but is modest: all three groups share a similar median, with income primarily widening the upper tail. The marginal histogram shows no meaningful difference in study-hour distributions across income tiers -- students from all backgrounds invest comparable time.
 
-**Policy implication:** Since study time effectiveness is income-neutral, effort-based interventions (study skill workshops, time management training) will benefit students across all socioeconomic backgrounds equally. However, closing the residual income gap requires addressing structural factors such as resource access (see Section 4.4).
+**Policy implication:** Since study time effectiveness is income-neutral, effort-based interventions (study-skill workshops, time management training) will benefit students across all socioeconomic backgrounds equally. However, closing the residual income gap requires addressing structural factors such as resource access (see Section 4.4).
 
 ---
 
@@ -52,9 +52,9 @@ The colour stratification by Peer Influence reveals a consistent but subtle patt
 
 **Figure 17:** Resource Access composition by Family Income level.
 
-This stacked bar chart reveals a critical structural relationship: low-income students are disproportionately concentrated in the "Low" resource access tier, while high-income students cluster in the "High" tier. The relationship between income and resource access is not random -- it is systematically correlated.
+The stacked bar chart shows that resource access is distributed approximately uniformly across all three income groups: roughly 19--20% of students fall into the "Low" resource tier regardless of family income. This means that income and resource access are largely **independent** variables in this cohort.
 
-This means that students from low-income backgrounds face a **double disadvantage**: lower income directly affects their performance (Section 3.3), AND it restricts their access to learning resources, which independently depresses scores (Access to Resources shows the largest High-Low mean gap of 1.89 points). These two effects compound rather than offset each other, creating a structural equity gap that effort-based interventions alone cannot close.
+However, independence does not eliminate risk. Because both low income (mean gap = 0.99 points, Section 3.3) and low resource access (mean gap = 1.89 points, the largest of any categorical variable) independently depress exam scores, students who happen to fall into **both** categories face a compound penalty. The chart confirms that a substantial number of low-income students (approximately 20%) do experience this double disadvantage, even though they are not disproportionately represented. Addressing this overlap requires targeted resource equalisation rather than effort-based interventions alone.
 
 ---
 
@@ -68,7 +68,7 @@ This heatmap reveals the most actionable multi-dimensional finding in the datase
 
 1. **Parental involvement matters more than motivation.** A student with low motivation but high parental involvement (67.7) outperforms a student with high motivation but low parental involvement (66.8). This is a counterintuitive finding with direct policy implications: investing in parental engagement programmes may yield greater academic returns than programmes targeting student motivation alone.
 
-2. **The compound effect is additive, not multiplicative.** Moving from the lowest cell (Low/Low = 65.9) to the highest (High/High = 68.4) produces a 2.5-point lift. The transition is gradual across both dimensions, suggesting that improvements in either factor independently contribute to better outcomes -- institutions need not wait for both to improve simultaneously.
+2. **The compound effect is additive, not multiplicative.** Moving from the lowest cell (Low/Low = 65.9) to the highest (High/High = 68.4) produces a 2.5-point lift. The transition is gradual across both dimensions, suggesting that improvements in either factor independently contribute to better outcomes, and institutions need not wait for both to improve simultaneously.
 
 ---
 
@@ -78,11 +78,11 @@ This heatmap reveals the most actionable multi-dimensional finding in the datase
 
 **Figure 19:** Pairwise Pearson correlation coefficients among all numerical variables.
 
-**Table 4: Correlations with Exam Score, Ranked by Strength**
+**Table 5: Correlations with Exam Score, Ranked by Strength**
 
 | Feature | r (with Exam Score) | Interpretation |
 |---------|--------------------:|----------------|
-| Attendance | 0.581 | Strong positive -- dominant predictor |
+| Attendance | 0.581 | Strong positive, dominant predictor |
 | Hours_Studied | 0.446 | Moderate positive |
 | Previous_Scores | 0.175 | Weak positive |
 | Tutoring_Sessions | 0.156 | Weak positive |
@@ -91,7 +91,7 @@ This heatmap reveals the most actionable multi-dimensional finding in the datase
 
 The heatmap confirms the hierarchy established by the scatter and line chart analyses:
 
-- **Behavioural variables dominate**: Attendance (0.581) and study hours (0.446) together account for the strongest linear predictors, far surpassing all other features. These are also the most actionable -- institutions can directly influence both through scheduling, monitoring, and study-skill programmes.
+- **Behavioural variables dominate**: Attendance (0.581) and study hours (0.446) together account for the strongest linear predictors, far surpassing all other features. These are also the most actionable, as institutions can directly influence both through scheduling, monitoring, and study-skill programmes.
 - **Historical performance is a poor proxy**: Previous scores (0.175) carry surprisingly little predictive weight, reinforcing the finding from Section 4.3 that past grades should not be the primary basis for risk identification.
 - **Lifestyle variables are noise in the linear context**: Sleep (-0.017) and physical activity (0.028) show virtually zero linear association with scores. While these may contribute indirectly through well-being, they are not levers for academic performance improvement.
 
